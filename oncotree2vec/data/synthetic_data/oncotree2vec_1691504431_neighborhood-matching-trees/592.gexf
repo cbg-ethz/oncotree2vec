@@ -1,0 +1,62 @@
+<?xml version='1.0' encoding='utf-8'?>
+<gexf xmlns="http://www.gexf.net/1.2draft" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.gexf.net/1.2draft http://www.gexf.net/1.2draft/gexf.xsd" version="1.2">
+  <meta lastmodifieddate="2023-08-08">
+    <creator>NetworkX 3.1</creator>
+  </meta>
+  <graph defaultedgetype="undirected" mode="static" name="">
+    <attributes mode="static" class="node">
+      <attribute id="0" title="Label" type="long" />
+    </attributes>
+    <nodes>
+      <node id="0" label="0">
+        <attvalues>
+          <attvalue for="0" value="1225" />
+        </attvalues>
+      </node>
+      <node id="-100" label="-100">
+        <attvalues>
+          <attvalue for="0" value="1229" />
+        </attvalues>
+      </node>
+      <node id="106" label="106">
+        <attvalues>
+          <attvalue for="0" value="1226" />
+        </attvalues>
+      </node>
+      <node id="142" label="142">
+        <attvalues>
+          <attvalue for="0" value="1231" />
+        </attvalues>
+      </node>
+      <node id="141" label="141">
+        <attvalues>
+          <attvalue for="0" value="1230" />
+        </attvalues>
+      </node>
+      <node id="143" label="143">
+        <attvalues>
+          <attvalue for="0" value="1227" />
+        </attvalues>
+      </node>
+      <node id="138" label="138">
+        <attvalues>
+          <attvalue for="0" value="1173" />
+        </attvalues>
+      </node>
+      <node id="17" label="17">
+        <attvalues>
+          <attvalue for="0" value="1228" />
+        </attvalues>
+      </node>
+    </nodes>
+    <edges>
+      <edge source="0" target="-100" id="0" />
+      <edge source="-100" target="106" id="1" />
+      <edge source="-100" target="17" id="2" />
+      <edge source="106" target="142" id="3" />
+      <edge source="106" target="141" id="4" />
+      <edge source="141" target="143" id="5" />
+      <edge source="143" target="138" id="6" />
+    </edges>
+  </graph>
+</gexf>
