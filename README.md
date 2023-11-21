@@ -1,3 +1,1 @@
-# oncotree2vec
-
-![plot](./docs/logo.png)
+![plot](./docs/logo.png =250x)
