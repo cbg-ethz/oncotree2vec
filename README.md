@@ -8,4 +8,8 @@
 
 <p align="justify">We propose <b>oncotree2vec</b>, a method for clustering tumor mutation trees by learning vector representations of mutation trees that capture the different relationships between subclones in an unsupervised manner. Learning low-dimensional tree embeddings facilitates the visualization of relations between trees in large cohorts and can be used for downstream analyses, such as deep learning approaches for single-cell multi-omics data integration.</p>
 
+<div align="center">
+<img src="./docs/fig1.png" width="70%" height="auto">
+</div>
+
 
