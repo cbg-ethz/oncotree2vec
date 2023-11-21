@@ -1,1 +1,2 @@
-![plot](./docs/logo.png =250x)
+<img src="./docs/logo.png" width="300" height="auto">
+
