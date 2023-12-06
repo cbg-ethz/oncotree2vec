@@ -81,7 +81,6 @@ options:
                         Label of the neutral node (used for discarding certain node relations).
   -ilabel IGNORE_LABEL, --ignore_label IGNORE_LABEL
                         Label to be ignored when matching individual nodes or pairwise relations. (usecase: ignoring neutral clones).
-  --no_use_package
   --remove_unique_words
 ```
 
