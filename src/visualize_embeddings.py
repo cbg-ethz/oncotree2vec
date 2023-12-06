@@ -18,7 +18,6 @@ from matplotlib.pyplot import gcf
 import seaborn as sns
 
 import plotly.express as px
-from sklearn.datasets import load_digits
 from umap import UMAP
 
 from scipy.spatial import distance
@@ -26,15 +25,9 @@ from scipy.cluster import hierarchy
 from sklearn.metrics import silhouette_score, silhouette_samples
 
 from utils import get_files
-from parse_metadata_tupro_melanoma import *
 from parse_metadata_aml_mutation_trees import *
-from parse_metadata_rob_trees import *
-from parse_metadata_rob_synthetic_trees import *
-from parse_metadata_brca_trees import *
-from parse_metadata_rcc_trees import *
+from parse_metadata_evolution_trees import *
 from utils_score_ranks import *
-
-sys.path.append('../../my-tupro/tree_embeddings')
 from utils_clone_clustering import *
 
 def create_distance_df(df_embeddings, metric = "cosine"):
@@ -80,10 +73,6 @@ def plot_heatmap (df_distances, df_embeddings, metric, sample_label_colors, colo
   print("Generate heatmap ", output_filename)
   trees = list(df_distances.index)
   if predefined_order:
-    #predefined_order = ["AML-64-001", "AML-115-001", "AML-08-001", "AML-99-005", "AML-58-001", "AML-83-002", "AML-114-001", "AML-30-001", "AML-20-001", "AML-02-001", "AML-32-001", "AML-59-001", "AML-120-001", "AML-24-001", "AML-76-001", "AML-51-001", "AML-82-001", "AML-121-001", "AML-26-001", "AML-70-001", "AML-69-001", "AML-34-001", "AML-48-001", "AML-67-001", "AML-41-001", "AML-74-001", "AML-14-001", "AML-22-001", "AML-45-001", "AML-81-001", "AML-96-001", "AML-97-006", "AML-37-001", "AML-75-001", "AML-17-001", "AML-49-001", "AML-123-001", "AML-103-001", "AML-23-001", "AML-71-001", "AML-105-001", "AML-40-001", "AML-36-001", "AML-05-001", "AML-06-001", "AML-53-001", "AML-35-001", "AML-31-001", "AML-33-001", "AML-07-002", "AML-29-001", "AML-84-001", "AML-25-001", "AML-42-001", "AML-98-001", "AML-111-001", "AML-18-002", "AML-77-001", "AML-93-001", "AML-60-001", "AML-66-003", "AML-91-001", "AML-55-001", "AML-57-001", "AML-11-001", "AML-47-001", "AML-102-001", "AML-12-001", "AML-50-001", "AML-09-002", "AML-72-001", "AML-46-001", "AML-122-001", "AML-119-001", "AML-73-001", "AML-39-002", "AML-104-001", "AML-56-001", "AML-108-001", "AML-109-001", "AML-13-001", "AML-52-001", "AML-63-005", "AML-85-001", "AML-80-001", "AML-90-001", "AML-116-001", "AML-118-001", "AML-100-001", "AML-112-001", "AML-88-002", "AML-28-001", "AML-62-001", "AML-15-001", "AML-38-003", "AML-61-001", "AML-113-001", "AML-16-001", "AML-89-001", "AML-86-001", "AML-92-001", "AML-94-001", "AML-95-001", "AML-110-001", "AML-101-001", "AML-79-001", "AML-106-001", "AML-78-001", "AML-107-002", "AML-117-001", "AML-04-003", "AML-21-002", "AML-43-001", "AML-01-002", "AML-19-001", "AML-44-001", "AML-87-001", "AML-10-001", "AML-54-001", "AML-03-001", "AML-65-001", "AML-27-001", "AML-68-001"] 
-
-    # aml clone 0.25: ['AML-108-001', 'AML-109-001', 'AML-40-001', 'AML-52-001', 'AML-63-005', 'AML-64-001', 'AML-115-001', 'AML-08-001', 'AML-48-001', 'AML-104-001', 'AML-56-001', 'AML-18-002', 'AML-60-001', 'AML-70-001', 'AML-121-001', 'AML-26-001', 'AML-51-001', 'AML-97-006', 'AML-37-001', 'AML-30-001', 'AML-20-001', 'AML-65-001', 'AML-27-001', 'AML-68-001', 'AML-58-001', 'AML-83-002', 'AML-99-005', 'AML-123-001', 'AML-103-001', 'AML-02-001', 'AML-32-001', 'AML-114-001', 'AML-76-001', 'AML-24-001', 'AML-107-002', 'AML-117-001', 'AML-110-001', 'AML-101-001', 'AML-13-001', 'AML-78-001', 'AML-79-001', 'AML-106-001', 'AML-85-001', 'AML-80-001', 'AML-112-001', 'AML-100-001', 'AML-90-001', 'AML-116-001', 'AML-118-001', 'AML-93-001', 'AML-94-001', 'AML-95-001', 'AML-91-001', 'AML-36-001', 'AML-05-001', 'AML-50-001', 'AML-102-001', 'AML-35-001', 'AML-49-001', 'AML-17-001', 'AML-71-001', 'AML-53-001', 'AML-22-001', 'AML-81-001', 'AML-06-001', 'AML-34-001', 'AML-73-001', 'AML-120-001', 'AML-122-001', 'AML-119-001', 'AML-04-003', 'AML-39-002', 'AML-88-002', 'AML-72-001', 'AML-46-001', 'AML-09-002', 'AML-12-001', 'AML-31-001', 'AML-74-001', 'AML-14-001', 'AML-113-001', 'AML-38-003', 'AML-61-001', 'AML-43-001', 'AML-23-001', 'AML-87-001', 'AML-10-001', 'AML-47-001', 'AML-21-002', 'AML-57-001', 'AML-11-001', 'AML-55-001', 'AML-75-001', 'AML-86-001', 'AML-89-001', 'AML-33-001', 'AML-07-002', 'AML-105-001', 'AML-44-001', 'AML-92-001', 'AML-96-001', 'AML-69-001', 'AML-03-001', 'AML-19-001', 'AML-01-002', 'AML-54-001', 'AML-59-001', 'AML-62-001', 'AML-15-001', 'AML-82-001', 'AML-16-001', 'AML-28-001', 'AML-29-001', 'AML-66-003', 'AML-45-001', 'AML-84-001', 'AML-25-001', 'AML-42-001', 'AML-111-001', 'AML-41-001', 'AML-98-001', 'AML-77-001', 'AML-67-001']
-
     assert sorted(predefined_order) == sorted(df_distances.index)
     df_distances = df_distances.loc[predefined_order, predefined_order]
     clustering = None
@@ -122,7 +111,6 @@ def plot_heatmap (df_distances, df_embeddings, metric, sample_label_colors, colo
       cluster_selected_vals = cluster_selected_vals + list(cluster_silhouette_vals)
 
       cluster_silhouette_vals.sort()
-      #y_upper += len(cluster_silhouette_vals)
 
     if len(cluster_selected_vals):
       silhouette_filtered_score = sum(cluster_selected_vals) / len(cluster_selected_vals)
@@ -133,7 +121,7 @@ def plot_heatmap (df_distances, df_embeddings, metric, sample_label_colors, colo
   min_score = df_distances.min().min() 
   max_score = df_distances.max().max() 
 
-  sns.set(font="Arial", font_scale=0.4)  
+  sns.set(font_scale=0.4)  
   plot = sns.clustermap(
       df_distances,
       row_cluster=plot_dendrogram,
@@ -152,7 +140,7 @@ def plot_heatmap (df_distances, df_embeddings, metric, sample_label_colors, colo
       yticklabels=True)
 
   if color_codes: 
-    sns.set(font="Arial", font_scale=0.7)
+    sns.set(font_scale=0.7)
     for label, color_code in color_codes.items():
       plot.ax_col_dendrogram.bar(0, 0, color="white", label=label, linewidth=0)
       for key, color in color_code.items():
@@ -178,16 +166,6 @@ def plot_heatmap (df_distances, df_embeddings, metric, sample_label_colors, colo
     l = plot.ax_col_dendrogram.legend(title="", loc="center", ncol=ncol, bbox_to_anchor=legend_box_position, 
         bbox_transform=gcf().transFigure, facecolor='white', framealpha=1)
 
-  '''
-  hline_index = []
-  cnt = 0
-  for idx in range(len(tree_clusters) - 1):
-    cnt = cnt + len(tree_clusters[idx])
-    hline_index.append(cnt)
-  ax_heatmap = plot.ax_heatmap
-  #ax_heatmap.hlines(hline_index, *ax_heatmap.get_xlim(), color='whitesmoke', linewidth=0.5)
-  '''
- 
   #plot.ax_row_dendrogram.set_visible(False) 
   #plot.ax_col_dendrogram.set_visible(False)
 
@@ -207,7 +185,7 @@ def get_sample_vocabulary(corpus_dir, wl_extn, skip_suffix):
     label_legend[k] = v
 
   # Read the mapping between the filenames and sample names.
-  treename_mapping = pd.read_csv(corpus_dir + "/filename_index.csv", header=None, index_col=0, squeeze=True).to_dict()
+  treename_mapping = pd.read_csv(corpus_dir + "/filename_index.csv", header=None, index_col=0).squeeze('columns').to_dict()
  
   # Read vocabulary from file for each tree.
   map_tree_vocabulary = {}
@@ -229,9 +207,6 @@ class TreeSample:
     self.sample_name = sample_name
     self.similarity_to_reference = 1-distance_to_reference
     self.vocabulary_intersection_to_reference = vocabulary_intersection_to_reference
-
-  def print(self):
-    print(self.sample_name, self.similarity_to_reference, self.vocabulary_intersection_to_reference)
 
 def visualize_embeddings(df_embeddings, clustering_threshold, out_path_embeddings_prefix, path_trees_json, metric = "cosine",
       wl_extn="", print_sub_heatmaps=False, last_iteration=True):
@@ -270,9 +245,6 @@ def visualize_embeddings(df_embeddings, clustering_threshold, out_path_embedding
       intersection = list_intersection(map_tree_vocabulary[tree_1], map_tree_vocabulary[tree_2])
       df_vocabulary_intersections.loc[tree_1,tree_2] = [item + "_" + label_legend[item] for item in intersection]
       df_vocabulary_intersection_counts.loc[tree_1,tree_2] = len(intersection)
-      #if tree_1 < tree_2 and len(intersection):
-      #  print()
-      #  print(tree_1, tree_2, len(intersection), intersection)
 
   error_percentage = {}
   avg_error_scores = {}
@@ -310,18 +282,10 @@ def visualize_embeddings(df_embeddings, clustering_threshold, out_path_embedding
   # Get metadata.
   sample_label_colors = None
   color_codes = None
-  if cancer_type == "tupro-melanoma" or cancer_type == "tupro-melanoma-v1.14" or cancer_type == "scatrex-melanoma":
-    sample_label_colors, color_codes = parse_metadata_tupro_melanoma(df_distances.index)
-  elif cancer_type == "aml-mutation-trees" or cancer_type == "aml-trees-etienne":
+  if cancer_type == "aml-mutation-trees" or cancer_type == "aml-trees-etienne":
     sample_label_colors, color_codes = parse_metadata_aml_mutation_trees(df_distances.index)
   elif cancer_type == "trees-rob":
     sample_label_colors, color_codes = parse_metadata_rob_trees(df_distances.index)
-  elif re.match("synthetic-trees-.+-rob", cancer_type):
-    sample_label_colors, color_codes = parse_metadata_rob_synthetic_trees(df_distances.index)
-  elif cancer_type == "trees-brca":
-    sample_label_colors, color_codes = parse_metadata_brca_trees(df_distances.index)
-  elif cancer_type == "trees-rcc":
-    sample_label_colors, color_codes = parse_metadata_rcc_trees(df_distances.index)
 
   # Plot full heatmap.
   tree_clusters, silhouette_score = plot_heatmap(df_distances, df_embeddings, metric, sample_label_colors, color_codes, out_path_embeddings_prefix + ".png",

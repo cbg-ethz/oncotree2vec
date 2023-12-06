@@ -1,4 +1,6 @@
-import os,sys,json,glob,copy,psutil,ast
+# Code base reused from https://github.com/benedekrozemberczki/graph2vec
+
+import os,sys,json,glob,copy,ast
 from pprint import pprint
 from time import time
 import hashlib

@@ -1,5 +1,6 @@
+# Code base reused from https://github.com/benedekrozemberczki/graph2vec
+
 import os,logging
-import numpy as np
 import pandas as pd
 from corpus_parser import Corpus
 from utils import save_graph_embeddings
@@ -32,7 +33,8 @@ def train_skipgram (corpus_dir, extn, learning_rate, embedding_size, num_negsamp
     '''
 
     logging.info("Initializing SKIPGRAM...")
-    treename_mapping = pd.read_csv(corpus_dir + "/filename_index.csv", header=None, index_col=0, squeeze=True).to_dict()
+
+    treename_mapping = pd.read_csv(corpus_dir + "/filename_index.csv", header=None, index_col=0).squeeze('columns').to_dict()
     corpus = Corpus(corpus_dir, treename_mapping, extn = extn, max_files=0)  # just load 'max_files' files from this folder
     corpus.scan_and_load_corpus()
 

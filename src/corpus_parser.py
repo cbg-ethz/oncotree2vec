@@ -1,4 +1,5 @@
-from nltk.tokenize import RegexpTokenizer
+# Code base reused from https://github.com/benedekrozemberczki/graph2vec
+
 import os
 import numpy as np
 import re
@@ -59,6 +60,7 @@ class Corpus(object):
         self._graph_name_to_id_map = {g: i for i, g in
                                       enumerate(self.graph_fname_list)}  # input layer of the skipgram network
         self._id_to_graph_name_map = {i: g for g, i in self._graph_name_to_id_map.items()}
+        print("treename_mapping", self.treename_mapping)
         self._id_to_sample_name = {i:self.treename_mapping[int(re.search('/([0-9]+)\.gexf', g).group(1))] for g, i in self._graph_name_to_id_map.items()}
 
         subgraph_to_id_map = self.scan_corpus()

@@ -1,9 +1,8 @@
-import argparse,os,logging,psutil,time
-from joblib import Parallel,delayed
+# Code base reused from https://github.com/benedekrozemberczki/graph2vec
 
+import argparse,os,logging,time
 from utils import get_files
 from train_utils import train_skipgram
-from classify import perform_classification
 from make_graph2vec_corpus import *
 from time import time
 import random
@@ -44,25 +43,19 @@ def path2name(path):
     return os.path.splitext(base)[0]
 
 def main(args):
-    '''
-    :param args: arguments for
-    1. training the skigram model for learning subgraph representations
-    2. construct the deep WL kernel using the learnt subgraph representations
-    3. performing graph classification using  the WL and deep WL kernel
-    :return: None
-    '''
-
     corpus_dir = args.corpus
     output_dir = args.output_dir
+    if not os.path.exists(output_dir): 
+      os.makedirs(output_dir) 
+
     batch_size = args.batch_size
     epochs = args.epochs
     embedding_size = args.embedding_size
     num_negsample = args.num_negsample
     learning_rate = args.learning_rate
     wlk_h = max(args.wlk_sizes)
-    label_filed_name = "Label" #args.label_filed_name
-    class_labels_fname = args.class_labels_file_name
     suffix = args.suffix
+    label_filed_name = "Label" 
 
     wl_extn = 'g2v'+str(wlk_h)
 
@@ -153,32 +146,22 @@ def main(args):
       df_embeddings = save_embedding(embeddings_path, model, graphs, treename_mapping, embedding_size)
 
     else:
-      df_embeddings = train_skipgram(corpus_dir, wl_extn, learning_rate, embedding_size, num_negsample, epochs, batch_size, wlk_h, embeddings_path) #output_dir, timestamp, suffix)
+      df_embeddings = train_skipgram(corpus_dir, wl_extn, learning_rate, embedding_size, num_negsample, epochs, batch_size, wlk_h, embeddings_path)
     logging.info('Trained the skipgram model in {} sec.'.format(round(time()-t0, 2)))
 
     # Visualize embeddings.
     command = ("python3 visualize_embeddings.py --in_embeddings " + embeddings_path + " --trees_json " + corpus_dir +
         "/trees.json --threshold 0.4 --wl_extn " +  wl_extn)
     print(command)
-    #os.system(command)
 
     visualize_embeddings(df_embeddings, 0.4, os.path.splitext(embeddings_path)[0], 
         corpus_dir + "/trees.json", "cosine", wl_extn, print_sub_heatmaps=True)
 
-    #perform_classification (corpus_dir, wl_extn, embedding_fname, class_labels_fname)
-
 
 def parse_args():
-    '''
-    Usual pythonic way of parsing command line arguments
-    :return: all command line arguments read
-    '''
     args = argparse.ArgumentParser("graph2vec")
-    args.add_argument("-c","--corpus", default = "../data/kdd_datasets/ptc",
-                      help="Path to directory containing graph files to be used for graph classification or clustering")
-
-    args.add_argument('-l','--class_labels_file_name', default='../data/kdd_datasets/ptc.Labels',
-                      help='File name containg the name of the sample and the class labels')
+    args.add_argument("-c","--corpus", required=True, 
+                      help="Path to directory containing graph files to be used for  clustering")
 
     args.add_argument('-o', "--output_dir", default = "../embeddings",
                       help="Path to directory for storing output embeddings")
@@ -204,19 +187,19 @@ def parse_args():
     args.add_argument('-s','--suffix', default='',
                       help='Suffix to be added to the output filenames.')
 
-    args.add_argument('-x0', "--augment_individual_nodes", default=1, type=float, #3
+    args.add_argument('-x0', "--augment_individual_nodes", default=1, type=float, 
                       help="Number of times to augment the vocabulary for the individual nodes.")
 
     args.add_argument('-x1', "--augment_neighborhoods", default=1, type=float,
                       help="Number of times to augment the vocabulary for the tree neighborhoods.")
 
-    args.add_argument('-x2', "--augment_pairwise_relations", default=1, type=float, #5
+    args.add_argument('-x2', "--augment_pairwise_relations", default=1, type=float, 
                       help="Number of times to augment the vocabulary for the non-adjacent pairwise relations.")
 
-    args.add_argument('-x3', "--augment_direct_edges", default=1, type=float, #5
+    args.add_argument('-x3', "--augment_direct_edges", default=1, type=float, 
                       help="Number of times to augment the vocabulary for the direct edges.")
 
-    args.add_argument('-x4', "--augment_mutually_exclusive_relations", default=0, type=float, 
+    args.add_argument('-x4', "--augment_mutually_exclusive_relations", default=1, type=float, 
                       help="Number of times to augment the vocabulary for the mutually exclusive relations.")
 
     args.add_argument('-x5', "--augment_tree_structure", default=1, type=float,

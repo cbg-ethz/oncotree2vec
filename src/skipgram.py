@@ -1,3 +1,5 @@
+# Code base reused from https://github.com/benedekrozemberczki/graph2vec
+
 import pandas as pd
 import numpy as np
 #import tensorflow as tf
