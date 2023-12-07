@@ -87,5 +87,6 @@ options:
 ### Usage example
 ----------
 ```
+$ cd src
 $ python oncotree2vec.py --corpus ../data/synthetic_data/oncotree2vec_1691495959_matching-vocabulary-sizes --embedding_size 64 --wlk_sizes 1 --augment_tree_structure 0 --augment_neighborhoods 0 --augment_individual_nodes 1 --augment_root_child_relations 0 --augment_direct_edges 0 --augment_pairwise_relations 0 --augment_mutually_exclusive_relations 0 --epochs 1000
 ```
