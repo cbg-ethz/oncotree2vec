@@ -39,7 +39,7 @@ kaleido-core       0.1.0
 ### Arguments
 ----------
 ```
-$ python oncotree2vec.py -h
+$ cd src ; python oncotree2vec.py -h
 
 usage: graph2vec [-h] -c CORPUS [-o OUTPUT_DIR] [-b BATCH_SIZE] [-e EPOCHS] [-d EMBEDDING_SIZE] [-neg NUM_NEGSAMPLE] [-lr LEARNING_RATE]
                  [--wlk_sizes [WLK_SIZES ...]] [-s SUFFIX] [-x0 AUGMENT_INDIVIDUAL_NODES] [-x1 AUGMENT_NEIGHBORHOODS] [-x2 AUGMENT_PAIRWISE_RELATIONS]
