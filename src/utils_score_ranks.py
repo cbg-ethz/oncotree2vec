@@ -32,8 +32,6 @@ def compute_rank_deviation(scores_sorted_by_rank):
   cnt = 0
   reference_max_values = [min_rank_score[map_previous_rank[rank]] for rank in ranks]
 
-  print(reference_max_values)
-
   # Each score should be lower than the minimum score from the previous rank.
   for idx in range(0, len(current_similarity_scored)):
     difference = current_similarity_scored[idx] - reference_max_values[idx]
@@ -51,8 +49,6 @@ def compute_rank_deviation(scores_sorted_by_rank):
 
 def get_sorted_scores(df_distances, df_vocabulary_intersections):
   prefixes = set([sample.split('_')[0] for sample in df_distances.index])
-
-  print("prefixes", prefixes)
 
   compare_all_trees = False
   if len(prefixes) == 1:
@@ -86,7 +82,6 @@ def get_sorted_scores(df_distances, df_vocabulary_intersections):
     score_map[sample] = scores
 
     # Get the stddev for the distance scores of the samples with the same rank as the reference sample.
-    print("scores", scores)
     max_rank = max([item.rank for item in scores])
     stdev_for_equal_scores[sample] = statistics.pstdev([x.similarity_to_reference for x in scores if x.rank == max_rank])
 

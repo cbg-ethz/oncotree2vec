@@ -7,7 +7,7 @@ from utils import save_graph_embeddings
 from skipgram import skipgram
 import sys
 
-def train_skipgram (corpus_dir, extn, learning_rate, embedding_size, num_negsample, epochs, batch_size, wlk, op_fname): #output_dir, timestamp, suffix):
+def train_skipgram (corpus_dir, extn, learning_rate, embedding_size, num_negsample, epochs, batch_size, wlk, op_fname):
     '''
     :param corpus_dir: folder containing WL kernel relabeled files. All the files in this folder will be relabled
     according to WL relabeling strategy and the format of each line in these folders shall be: <target> <context 1> <context 2>....
@@ -18,18 +18,7 @@ def train_skipgram (corpus_dir, extn, learning_rate, embedding_size, num_negsamp
     :param epochs: number of iterations the dataset is traversed by the skipgram model
     :param batch_size: size of each batch for the skipgram model
     :param op_fname: path where to save the embeddings
-    :param output_dir: the folder where embedding file will be stored
     :return: name of the file that contains the subgraph embeddings (in word2vec format proposed by Mikolov et al (2013))
-    '''
-
-    '''
-    op_fname = '_'.join([timestamp, os.path.basename(corpus_dir), 'dims', str(embedding_size), 'epochs',
-                         str(epochs),'lr',str(learning_rate),'wlk',str(wlk), 'ns', str(num_negsample), 'embeddings', suffix + '.txt'])
-    op_fname = os.path.join(output_dir, op_fname)
-    if os.path.isfile(op_fname):
-        logging.info('The embedding file: {} is already present, hence NOT training skipgram model '
-                     'for subgraph vectors'.format(op_fname))
-        return op_fname
     '''
 
     logging.info("Initializing SKIPGRAM...")
@@ -53,7 +42,7 @@ def train_skipgram (corpus_dir, extn, learning_rate, embedding_size, num_negsamp
     )
 
     df_embeddings = model_skipgram.train(corpus=corpus,batch_size=batch_size)
-    embeddings_file = out_path_prefix + ".csv"
+    embeddings_file = out_path_prefix + "iter" + str(epochs) + ".csv"
     df_embeddings.to_csv(embeddings_file)
     return df_embeddings
 

@@ -418,10 +418,29 @@ def wlk_relabel_and_dump_memory_version(fnames, max_h, vocabulary_params, node_l
     with open(os.path.join(dir_path, "label_tags.json"), 'w') as convert_file:
       convert_file.write(json.dumps(label_tags))
 
+    vocabulary_size = 0
+    for n,d in g.nodes(data=True):
+      for key in d:
+        if key.lower() != "label":
+          vocabulary_size = vocabulary_size + len(d[key])
+    vocabulary_size = vocabulary_size / 2 # the number of trees is doubled.
+
     with open(os.path.join(dir_path, LOGS_FILENAME), 'w') as logs_file:
       logs_file.write("Vocabulary parameters: " + json.dumps(vocabulary_params))
       logs_file.write("\n\n")
-      logs_file.write("Longest path: " + str(longest_path) + ".")
+      logs_file.write("Number of trees:" + str(len(fnames)/2)) # the number of trees is doubled. 
+      logs_file.write("\n")
+      logs_file.write("Longest root-leaf path: " + str(longest_path) + ".")
+      logs_file.write("\n")
+      logs_file.write("Vocabulary size: " + str(vocabulary_size) + " words.")
+      logs_file.write("\n")
+
+      emb_size = 32
+      if vocabulary_size > 1000 and vocabulary_size <= 10000:
+        emb_size = 64
+      elif vocabulary_size > 10000:
+        emb_size = 128
+      logs_file.write("Recommended embedding size: " + str(emb_size) + ".")       
 
 def main():
 

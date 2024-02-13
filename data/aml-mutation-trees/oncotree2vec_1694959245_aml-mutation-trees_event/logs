@@ -1,3 +1,6 @@
-Vocabulary parameters: {"wlk_sizes": [0], "individual_nodes": 0.0, "neighborhoods": 0.0, "non_adjacent_pairs": 1.0, "mutually_exclusive_pairs": 1.0, "direct_edges": 1.0, "structure": 0.0, "root_child_relations": 0.0, "root_label": 0, "ignore_label": null, "remove_unique_words": false}
+Vocabulary parameters: {"wlk_sizes": [1], "individual_nodes": 1, "neighborhoods": 1, "non_adjacent_pairs": 5, "mutually_exclusive_pairs": 5, "direct_edges": 5, "structure": 0, "root_child_relations": 10, "root_label": 0, "ignore_label": null, "remove_unique_words": false}
 
-Longest path: 7.
+Number of trees:123.0
+Longest root-leaf path: 7.
+Vocabulary size: 11.0 words.
+Recommended embedding size: 32.

@@ -27,7 +27,6 @@ class Corpus(object):
 
         subgraphs = []
         for fname in self.graph_fname_list:
-            print(fname)
             subgraphs.extend(
                 [l.split()[0] for l in open(fname)])  # just take the first word of every sentence
         subgraphs.append('UNK')
@@ -60,7 +59,6 @@ class Corpus(object):
         self._graph_name_to_id_map = {g: i for i, g in
                                       enumerate(self.graph_fname_list)}  # input layer of the skipgram network
         self._id_to_graph_name_map = {i: g for g, i in self._graph_name_to_id_map.items()}
-        print("treename_mapping", self.treename_mapping)
         self._id_to_sample_name = {i:self.treename_mapping[int(re.search('/([0-9]+)\.gexf', g).group(1))] for g, i in self._graph_name_to_id_map.items()}
 
         subgraph_to_id_map = self.scan_corpus()

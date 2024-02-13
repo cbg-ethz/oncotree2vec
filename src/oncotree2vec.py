@@ -36,6 +36,7 @@ def save_embedding(output_path, model, files, tree_mapping, dimensions):
     out.index.name = "graphs"
     out.columns.name = "features"
     out.to_csv(output_path)
+    print("output_path", output_path)
     return out
 
 def path2name(path):
@@ -100,10 +101,37 @@ def main(args):
         'ns' + str(num_negsample)]) 
     dir_path = os.path.join(args.output_dir, filename_prefix)
     os.makedirs(dir_path)
-    embeddings_fname = filename_prefix + suffix + '.csv'
+
+    output_files_prefix = timestamp + suffix
+    embeddings_fname = output_files_prefix + '.csv'
     embeddings_path = os.path.join(dir_path, embeddings_fname)
 
     if args.use_package:
+
+      def save_embedding(output_path, model, files, tree_mapping, dimensions):
+          """
+          Function to save the embedding.
+          :param output_dir: Path to the output directory.
+          :param model: The embedding model object.
+          :param files: The list of files.
+          :param dimensions: The embedding dimension parameter.
+          """
+          out = []
+          indices = []
+          for f in files:
+              identifier = path2name(f)
+              if not identifier[0].isdigit():
+                continue
+              out.append(list(model.dv["g_"+identifier]))
+              indices.append(int(identifier))
+          column_names = [str(dim) for dim in range(dimensions)]
+          out = pd.DataFrame(out, index=indices, columns=column_names)
+          out.rename(index = tree_mapping, inplace = True)
+          out.index.name = "graphs"
+          out.columns.name = "features"
+          out.to_csv(output_path)
+          return out
+
       treename_mapping = pd.read_csv(corpus_dir + "/filename_index.csv", header=None, index_col=0, squeeze=True).to_dict()
       feature_files = get_files(dirname=corpus_dir, extn='.gexf.' + wl_extn, max_files=0)
       documents = []
@@ -146,15 +174,16 @@ def main(args):
       df_embeddings = save_embedding(embeddings_path, model, graphs, treename_mapping, embedding_size)
 
     else:
-      df_embeddings = train_skipgram(corpus_dir, wl_extn, learning_rate, embedding_size, num_negsample, epochs, batch_size, wlk_h, embeddings_path)
+      df_embeddings = train_skipgram(corpus_dir, wl_extn, learning_rate, embedding_size, num_negsample, epochs, batch_size,
+          wlk_h, os.path.join(dir_path, output_files_prefix + "_"))
     logging.info('Trained the skipgram model in {} sec.'.format(round(time()-t0, 2)))
 
     # Visualize embeddings.
     command = ("python3 visualize_embeddings.py --in_embeddings " + embeddings_path + " --trees_json " + corpus_dir +
-        "/trees.json --threshold 0.4 --wl_extn " +  wl_extn)
+        "/trees.json --threshold " + str(args.heatmap_contract_threshold) + " --wl_extn " +  wl_extn)
     print(command)
 
-    visualize_embeddings(df_embeddings, 0.4, os.path.splitext(embeddings_path)[0], 
+    visualize_embeddings(df_embeddings, args.heatmap_contract_threshold, os.path.splitext(embeddings_path)[0] + "_iter" + str(epochs), 
         corpus_dir + "/trees.json", "cosine", wl_extn, print_sub_heatmaps=True)
 
 
@@ -187,25 +216,25 @@ def parse_args():
     args.add_argument('-s','--suffix', default='',
                       help='Suffix to be added to the output filenames.')
 
-    args.add_argument('-x0', "--augment_individual_nodes", default=1, type=float, 
+    args.add_argument('-x0', "--augment_individual_nodes", default=1, type=int, 
                       help="Number of times to augment the vocabulary for the individual nodes.")
 
-    args.add_argument('-x1', "--augment_neighborhoods", default=1, type=float,
+    args.add_argument('-x1', "--augment_neighborhoods", default=1, type=int,
                       help="Number of times to augment the vocabulary for the tree neighborhoods.")
 
-    args.add_argument('-x2', "--augment_pairwise_relations", default=1, type=float, 
+    args.add_argument('-x2', "--augment_pairwise_relations", default=1, type=int, 
                       help="Number of times to augment the vocabulary for the non-adjacent pairwise relations.")
 
-    args.add_argument('-x3', "--augment_direct_edges", default=1, type=float, 
+    args.add_argument('-x3', "--augment_direct_edges", default=1, type=int, 
                       help="Number of times to augment the vocabulary for the direct edges.")
 
-    args.add_argument('-x4', "--augment_mutually_exclusive_relations", default=1, type=float, 
+    args.add_argument('-x4', "--augment_mutually_exclusive_relations", default=1, type=int, 
                       help="Number of times to augment the vocabulary for the mutually exclusive relations.")
 
-    args.add_argument('-x5', "--augment_tree_structure", default=1, type=float,
+    args.add_argument('-x5', "--augment_tree_structure", default=1, type=int,
                       help="Number of times to augment the vocabulary for the tree structure.")
 
-    args.add_argument('-x6', "--augment_root_child_relations", default=1, type=float,
+    args.add_argument('-x6', "--augment_root_child_relations", default=1, type=int,
                       help="Number of times to augment the vocabulary for the root-child node relations.")
 
     args.add_argument('-rlabel', "--root_label", default=0, type=int,
@@ -213,6 +242,9 @@ def parse_args():
 
     args.add_argument('-ilabel', "--ignore_label", type=int,
                       help="Label to be ignored when matching individual nodes or pairwise relations. (usecase: ignoring neutral clones).")
+
+    args.add_argument('-threshold', "--heatmap_contract_threshold", default=0.4, type=float,
+                      help="Numerical threshold in the range 0 and 1 indicating the cut of the hierarhical clustering w.r.t. the maximum cosine distance between the samples inside each cluster.")
 
     args.add_argument('--use_package', action='store_true')
     args.add_argument('--no_use_package', dest='use_package', action='store_false')

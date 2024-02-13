@@ -1,0 +1,30 @@
+.node circle {
+  fill: #fff;
+  stroke: gray;
+  stroke-width: 3px;
+}
+
+.node text { font: 12px sans-serif; }
+
+.node--internal text {
+  text-shadow: 0 1px 0 #fff, 0 -1px 0 #fff, 1px 0 0 #fff, -1px 0 0 #fff;
+}
+
+.link {
+  fill: none;
+  stroke: #ccc;
+  stroke-width: 2px;
+}
+
+.btn-circle.btn-xl {
+    width: 30px;
+    height: 30px;
+    padding: 0px 0px;
+    border-radius: 35px;
+    font-size: 24px;
+    line-height: 1.33;
+}
+
+
+
+

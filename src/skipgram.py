@@ -48,7 +48,7 @@ class skipgram(object):
                                                           stddev=1.0 / math.sqrt(self.embedding_size))) #output layer wt
             biases = tf.Variable(tf.zeros(self.num_subgraphs)) #output layer biases
 
-            #negative sampling part
+            # Negative sampling part.
             loss = tf.reduce_mean(
                 tf.nn.nce_loss(weights=weights,
                                biases=biases,
@@ -126,9 +126,11 @@ class skipgram(object):
                 logging.info('#########################   Epoch: %d :  %f, %.2f sec.  #####################' % (i, loss/step,epoch_time))
                 if i % 100 == 0:
                   df = embeddings_to_dataframe(self.normalized_embeddings.eval(), sample_names, corpus)
-                  filename_prefix = out_path_prefix + "iter_" + str(i)
-                  max_distance_duplicates, max_distance, min_distance, silhouette_score, error_percentages, avg_error_scores, stdev_for_equal_scores = visualize_embeddings(df, 0.5,
-                      filename_prefix, path_trees_json=self.corpus_dir+"/trees.json", wl_extn=self.wl_extn, last_iteration=False, metric="cosine")
+                  filename_prefix = out_path_prefix + "iter" + str(i)
+                  (max_distance_duplicates, max_distance, min_distance, silhouette_score,
+                      error_percentages, avg_error_scores, stdev_for_equal_scores) = visualize_embeddings(df, 0.5,
+                      filename_prefix, path_trees_json=self.corpus_dir+"/trees.json", wl_extn=self.wl_extn,
+                      last_iteration=False, metric="cosine")
                   df.to_csv(filename_prefix + ".csv", index=True)
 
                   for sample in error_percentages:
@@ -147,6 +149,8 @@ class skipgram(object):
                 min_distances.append(min_distance)
                 silhouette_scores.append(silhouette_score)
                 loss = 0
+
+            filename_prefix = out_path_prefix + "iter" + str(i+1) + "_"
  
             # Plot loss.
             fig = plt.figure()
@@ -154,7 +158,8 @@ class skipgram(object):
             plt.gca().set_ylim([0, 4])
             plt.xlabel("num iterations")
             plt.ylabel("loss")
-            fig.savefig(out_path_prefix + "loss_values.png", format='png', dpi=300)
+            fig.savefig(filename_prefix + "loss_values.png", format='png', dpi=300)
+            plt.close()
 
             # Plot min/max distances and silhouette scores.
             fig = plt.figure()
@@ -166,7 +171,8 @@ class skipgram(object):
             plt.xlabel("num iterations")
             plt.ylabel("scores")
             plt.legend(loc="upper right")
-            fig.savefig(out_path_prefix + "other_scores.png", format='png', dpi=300)
+            fig.savefig(filename_prefix + "other_scores.png", format='png', dpi=300)
+            plt.close()
 
             # Plot error scores if applicable.
             def plot_error_scores(error_scores_all_iterations, filename, ylabel, y_axis_upper_limit = None):
@@ -185,12 +191,13 @@ class skipgram(object):
                 plt.ylabel(ylabel)
                 plt.legend(loc="upper right")
                 fig.savefig(filename, format='png', dpi=300)
+                plt.close()
  
-            plot_error_scores(error_percentages_all_iterations, out_path_prefix + "error_percentages.png", 
+            plot_error_scores(error_percentages_all_iterations, filename_prefix + "error_percentages.png", 
                 "percentages of samples with similarity score shifted from expected ordering")
-            plot_error_scores(avg_error_scores_all_iterations, out_path_prefix + "avg_deviation.png", 
+            plot_error_scores(avg_error_scores_all_iterations, filename_prefix + "avg_deviation.png", 
                 "average similarity score deviation from expected ordering", y_axis_upper_limit=0.3)
-            plot_error_scores(stdev_for_equal_scores_all_iterations, out_path_prefix + "stdev_for_equal_scores.png",
+            plot_error_scores(stdev_for_equal_scores_all_iterations, filename_prefix + "stdev_for_equal_scores.png",
                 "stdev of similarityies for sample pairs with same vocabulary intersection size")
 
             # Done with training.

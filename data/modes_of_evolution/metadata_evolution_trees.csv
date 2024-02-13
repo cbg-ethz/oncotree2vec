@@ -1,0 +1,44 @@
+sample,cancer_type,paper
+AML-02-001,AML,
+AML-05-001,AML,
+AML-16-001,AML,
+AML-33-001,AML,
+AML-35-001,AML,
+AML-55-001,AML,
+AML-73-001,AML,
+AML-77-001,AML,
+UMM059,uveal melanoma,Durante
+UMM061,uveal melanoma,Durante
+UMM062,uveal melanoma,Durante
+UMM063,uveal melanoma,Durante
+UMM064,uveal melanoma,Durante
+UMM065,uveal melanoma,Durante
+UMM066,uveal melanoma,Durante
+UMM069,uveal melanoma,Durante
+TN1,braca,Minussi 
+TN2,braca,Minussi
+TN3,braca,Minussi
+TN4,braca,Minussi
+TN5,braca,Minussi
+TN6,braca,Minussi
+TN7,braca,Minussi
+TN8,braca,Minussi
+CRUK0029,non-small-cell lung cancer,TRACERx
+CRUK0062,non-small-cell lung cancer,TRACERx
+CRUK0065,non-small-cell lung cancer,TRACERx
+CRUK0071,non-small-cell lung cancer,TRACERx
+CRUK0096,non-small-cell lung cancer,TRACERx
+K136,ccRCC,TRACERx
+K153,ccRCC,TRACERx
+K252,ccRCC,TRACERx
+K255,ccRCC,TRACERx
+K448,ccRCC,TRACERx
+PD9694,braca,Yates
+PD9849,braca,Yates
+PD9852,braca,Yates
+MED001,mesothelioma,Zhang
+MED012,mesothelioma,Zhang
+MED023,mesothelioma,Zhang
+MED024,mesothelioma,Zhang
+MED027,mesothelioma,Zhang
+MED034,mesothelioma,Zhang

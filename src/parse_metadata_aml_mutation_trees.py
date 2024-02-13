@@ -39,8 +39,12 @@ def parse_metadata_aml_mutation_trees(samples):
   metadata_colors['Response'] = {'': 'white', 'CRi': '#e1d48e', 'CR': '#d8b74b', 'Died': '#014421', 'TE': '#008080', 'NE': '#e36745', 'NR': '#9cc3fa', 'HI': '#cdbfcf'}
   metadata_colors['maxCCF'] = {0.2:"#f9e0c1", 0.3:"#f9cb9c", 0.4:"#e3b089", 0.5:"#ddba93", 0.6:"#cfdcce", 0.7:"#abc2aa", 0.8:"#7a9778", 0.9:"#516450", 1:"#283228"}
 
-  all_color_labels = []
+  filtered_metadata_colors = {}
   for key in metadata_options:
+    filtered_metadata_colors[key] = metadata_colors[key]
+
+  all_color_labels = []
+  for key in set(metadata_options.keys()) :
     color_map = {sample:"white" for sample in samples}
     for sample in samples:
       color_map[sample] = metadata_colors[key][sample_metadata_map[sample][key]] 
@@ -48,4 +52,4 @@ def parse_metadata_aml_mutation_trees(samples):
     color_series.name = key
     all_color_labels.append(color_series)  
 
-  return pd.concat(all_color_labels, axis=1), metadata_colors
+  return pd.concat(all_color_labels, axis=1), filtered_metadata_colors

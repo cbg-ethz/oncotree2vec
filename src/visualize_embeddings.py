@@ -10,6 +10,7 @@ import pandas as pd
 import numpy as np
 import argparse
 import webbrowser
+from distutils.dir_util import copy_tree
 from anytree.importer import JsonImporter
 from anytree.exporter import JsonExporter
 
@@ -29,6 +30,8 @@ from parse_metadata_aml_mutation_trees import *
 from parse_metadata_evolution_trees import *
 from utils_score_ranks import *
 from utils_clone_clustering import *
+
+LOGS_FILENAME = "logs"
 
 def create_distance_df(df_embeddings, metric = "cosine"):
   graphs = list(df_embeddings.index)
@@ -68,9 +71,12 @@ def list_intersection(lst1, lst2):
   return [value for value in lst1 if value in lst2]
 
 def plot_heatmap (df_distances, df_embeddings, metric, sample_label_colors, color_codes, output_filename, clustering_threshold, 
-    cancer_type, cmap="Blues_r", predefined_order=None, tree_clusters=None, annotation=False):
+    cancer_type, cmap="Blues_r", predefined_order=None, tree_clusters=None, plot_vocabulary_sizes=False):
 
-  print("Generate heatmap ", output_filename)
+  annotation = False
+  if plot_vocabulary_sizes:
+    annotation = True
+
   trees = list(df_distances.index)
   if predefined_order:
     assert sorted(predefined_order) == sorted(df_distances.index)
@@ -82,10 +88,10 @@ def plot_heatmap (df_distances, df_embeddings, metric, sample_label_colors, colo
     plot_dendrogram = True
     clustering = hierarchy.linkage(distance.pdist(df_embeddings), metric=metric, method="ward")
     tree_clusters = get_similarity_clusters(clustering, trees, df_distances, distance_threshold=clustering_threshold)
-    sample_order = [item for sublist in tree_clusters for item in sublist]
-    print("Sample order:", sample_order)
-    with open(os.path.splitext(output_filename)[0] + "_sample_order.txt", 'w') as filehandle:
-      json.dump(sample_order, filehandle)
+    if not plot_vocabulary_sizes:
+      sample_order = [item for sublist in tree_clusters for item in sublist]
+      with open(os.path.splitext(output_filename)[0] + "_sample_order.txt", 'w') as filehandle:
+        json.dump(sample_order, filehandle)
 
   # Compute silhouette score if there is more than one cluster.
   silhouette_overall_score = 0
@@ -115,8 +121,8 @@ def plot_heatmap (df_distances, df_embeddings, metric, sample_label_colors, colo
     if len(cluster_selected_vals):
       silhouette_filtered_score = sum(cluster_selected_vals) / len(cluster_selected_vals)
 
-  print("silhouette_overall_score", silhouette_overall_score)
-  print("silhouette_filtered_score", silhouette_filtered_score)
+  #print("silhouette_overall_score", silhouette_overall_score)
+  #print("silhouette_filtered_score", silhouette_filtered_score)
 
   min_score = df_distances.min().min() 
   max_score = df_distances.max().max() 
@@ -134,7 +140,7 @@ def plot_heatmap (df_distances, df_embeddings, metric, sample_label_colors, colo
       vmin=min_score,
       vmax=max_score,
       dendrogram_ratio=(0.1, 0.1),
-      annot=True, #annotation,
+      annot=annotation,
       #fmt=".2f",
       xticklabels=True,
       yticklabels=True)
@@ -153,12 +159,6 @@ def plot_heatmap (df_distances, df_embeddings, metric, sample_label_colors, colo
     elif cancer_type == "trees-rob":
       ncol = 1
       legend_box_position = (0, 0)
-    elif cancer_type == "trees-rcc":
-      ncol = 6
-      legend_box_position = (0.1, -0.05)
-    elif cancer_type == "tupro-melanoma" or cancer_type == "tupro-melanoma-v1.14" or cancer_type == "scatrex-melanoma":
-      ncol = 2
-      legend_box_position = (0.1, 0.85)
     else:
       ncol = 3
       legend_box_position = (0, 0)
@@ -171,6 +171,7 @@ def plot_heatmap (df_distances, df_embeddings, metric, sample_label_colors, colo
 
   plot.cax.set_visible(False)
   plot.savefig(output_filename, format='png', dpi=300)
+  plt.close()
 
   return tree_clusters, silhouette_filtered_score
 
@@ -210,8 +211,9 @@ class TreeSample:
 
 def visualize_embeddings(df_embeddings, clustering_threshold, out_path_embeddings_prefix, path_trees_json, metric = "cosine",
       wl_extn="", print_sub_heatmaps=False, last_iteration=True):
-
-  path_split = os.path.basename(out_path_embeddings_prefix).split("_")
+ 
+  path_split = os.path.basename(os.path.dirname(out_path_embeddings_prefix)).split("_")
+  timestamp = path_split[0]
   cancer_type = path_split[3]
   threshold = path_split[5]
   tree_type = path_split[6]
@@ -219,7 +221,7 @@ def visualize_embeddings(df_embeddings, clustering_threshold, out_path_embedding
   # Get distances between clone samples and the rest of the cohort.
   suffix = "#2"
   max_distance_duplicates = get_max_distance_bw_clone_samples(df_embeddings, metric=metric, suffix=suffix)
-  print("Max distance duplicates:", max_distance_duplicates)
+  #print("[with duplicates] Max distance duplicates:", max_distance_duplicates)
 
   # Remove the duplicate trees.
   df_embeddings = df_embeddings.loc[~df_embeddings.index.str.endswith(suffix)]
@@ -229,17 +231,15 @@ def visualize_embeddings(df_embeddings, clustering_threshold, out_path_embedding
   df_distances = create_distance_df(df_embeddings, metric=metric)
   min_distance = df_distances.mask(np.eye(len(df_distances.index), dtype = bool)).min().min()
   max_distance = df_distances.mask(np.eye(len(df_distances.index), dtype = bool)).max().max()
-  print("[without duplicates] Min distance:", min_distance, "Max distance:", max_distance)
+  #print("[w/o duplicates] Min distance:", min_distance, "Max distance:", max_distance)
 
   vocabulary_dir = os.path.dirname(path_trees_json)
   map_tree_vocabulary, label_legend = get_sample_vocabulary(vocabulary_dir, wl_extn, skip_suffix=suffix)
-  #trees = list(map_tree_vocabulary.keys())
   trees = list(df_embeddings.index)
 
   # Get pairwise sample vocabulary intersections.
   df_vocabulary_intersections = pd.DataFrame(columns=trees, index=trees)
   df_vocabulary_intersection_counts = pd.DataFrame(columns=trees, index=trees).astype(float)
-  print("map_tree_vocabulary", map_tree_vocabulary)
   for tree_1 in trees:
     for tree_2 in trees:
       intersection = list_intersection(map_tree_vocabulary[tree_1], map_tree_vocabulary[tree_2])
@@ -275,9 +275,9 @@ def visualize_embeddings(df_embeddings, clustering_threshold, out_path_embedding
     tree_clusters = [["neighborhood", "neighborhood_match"], ["direct_edge1", "direct_edge1_match"], ["direct_edge2", "direct_edge2_match"], ["direct_edge3", "direct_edge3_match"], ["mutual1", "mutual1_match"], ["mutual2", "mutual2_match"], ["mutual3", "mutual3_match"], ["root_child", "root_child_match"], ["mutual4", "mutual4_match"], ["mutual5", "mutual5_match"], ["pair", "pair_match"], ["mutualx", "mutualx_match_swap"], ["xdirect_edgex", "xdirect_edgex_no_match", "xmix", "xmix_no_match"]]
 
   # Plot vocabulary sizes.
-  #if last_iteration:
-  plot_heatmap(df_vocabulary_intersection_counts, df_embeddings, metric, None, None, out_path_embeddings_prefix + "_vocabulary_sizes.png",
-      clustering_threshold, cancer_type, cmap="Blues", predefined_order=predefined_order, annotation=True)
+  if last_iteration:
+    plot_heatmap(df_vocabulary_intersection_counts, df_embeddings, metric, None, None, out_path_embeddings_prefix + "_vocabulary_sizes.png",
+        clustering_threshold, cancer_type, cmap="Blues", predefined_order=predefined_order, plot_vocabulary_sizes=True)
 
   # Get metadata.
   sample_label_colors = None
@@ -309,12 +309,9 @@ def visualize_embeddings(df_embeddings, clustering_threshold, out_path_embedding
   tree_clusters_with_scores = [(cluster, get_avg_score(cluster, df_distances)) for cluster in tree_clusters] 
   tree_clusters_with_scores = sorted(tree_clusters_with_scores, key=lambda tuple: tuple[1])  
   tree_clusters = [item[0] for item in tree_clusters_with_scores]
-  print("Clusters", [item for item in tree_clusters_with_scores if len(item[0]) > 1])
 
-  print()
-  for cluster in [item for item in tree_clusters_with_scores if len(item[0]) > 1]:
-    print(cluster[0])
-    print()
+  with open(out_path_embeddings_prefix + "_clusters.txt", 'w') as filehandle:
+    json.dump([item for item in tree_clusters_with_scores if len(item[0]) > 1], filehandle)
 
   if cancer_type == "neighborhood-matching-trees" or cancer_type == "matching-vocabulary-sizes":
     tree_clusters = sample_groups
@@ -349,8 +346,8 @@ def visualize_embeddings(df_embeddings, clustering_threshold, out_path_embedding
       color=umap_colors, labels={'color': 'tree cluster'}, hover_data={"sample": df_embeddings.index},
       opacity=0.75
   )
-  fig.write_image(out_path_embeddings_prefix + "umap.png")
-  print("Generatig UMAP", out_path_embeddings_prefix + "umap.png")
+  fig.write_image(out_path_embeddings_prefix + "_umap.png")
+  plt.close()
 
   # Get cluster summaries.
   cluster_summaries = []
@@ -373,26 +370,64 @@ def visualize_embeddings(df_embeddings, clustering_threshold, out_path_embedding
             out_path_embeddings_prefix + "_" + sample  + ".png",
             clustering_threshold, cancer_type, predefined_order = group)
  
-      #submatrix_ranks = df_vocabulary_intersection_counts.loc[group, group]
-      #plot_heatmap(submatrix_ranks, df_embeddings, metric, sample_label_colors, color_codes,
-      #      out_path_embeddings_prefix + "_ranks_" + sample  + ".png",
-      #      clustering_threshold, cancer_type, predefined_order = group)
+  # Generate javascript visualization.
+  clusters_json_file = out_path_embeddings_prefix + ".json"
+  generate_tree_visualization(tree_clusters, cluster_summaries, sample_label_colors, color_codes, path_trees_json, clusters_json_file)
 
-  # Generat javascript visualization.
-  url = "file:///Users/mdragan/Downloads/tupro_cohort_analysis/my-tupro/tree_embeddings/visualize_trees/visualize_all_" + tree_type + "_trees_" + cancer_type + "_" + threshold + ".html"
-  generate_tree_visualization(tree_clusters, cluster_summaries, sample_label_colors, color_codes, path_trees_json, 
-      out_path_embeddings_prefix + ".javascript", url)
   if last_iteration:
-    out_path_javascript = os.path.splitext(path_trees_json)[0] + "_clusters.javascript"
-    generate_tree_visualization(tree_clusters, cluster_summaries, sample_label_colors, color_codes, path_trees_json, out_path_javascript, url)
+    if path_trees_json and os.path.exists(path_trees_json):
+      def create_visualization_folder(template_dir, target_dir, clusters_javascript_path, placeholder):
+        os.makedirs(target_dir)
+        copy_tree(template_dir, target_dir)
+
+        # Replace PLACEHOLDER json path.
+        html_file = os.path.join(target_dir, "index.html")
+        with open(html_file, 'r') as file:
+          data = file.read()  
+        data = data.replace(placeholder, clusters_javascript_path)
+        with open(html_file, 'w') as file:
+          file.write(data) 
+        return html_file
+
+      current_path = os.getcwd()
+      visualization_dir = os.path.join(os.path.abspath(os.path.join(current_path, os.pardir)), "visualization")
+      placeholder_string = "JSON_PLACEHOLDER"
+
+      # Add tree chohort visualization.
+      template_dir = os.path.join(visualization_dir, "template_tree_cohort")
+      target_dir = os.path.join(visualization_dir, timestamp, "tree_cohort")
+      absolute_path_trees_json = os.path.join(current_path, path_trees_json)
+      html_file = create_visualization_folder(template_dir, target_dir, absolute_path_trees_json, placeholder_string)
+
+      # Add cluster visualization.
+      template_dir = os.path.join(visualization_dir, "template_clusters")
+      target_dir = os.path.join(visualization_dir, timestamp, "clusters")
+      clusters_javascript_file_absolute_path = os.path.join(current_path, clusters_json_file)
+      html_file = create_visualization_folder(template_dir, target_dir, clusters_javascript_file_absolute_path, placeholder_string)
+
+      chrome_path = 'open -a /Applications/Google\ Chrome.app %s'
+      webbrowser.get(chrome_path).open(html_file)
+
+  '''
+  with open(os.path.join(dir_path, LOGS_FILENAME), 'w') as logs_file:
+    logs_file.write("Vocabulary parameters: " + json.dumps(vocabulary_params))
+    logs_file.write("\n\n")
+    logs_file.write("Number of trees:" + str(len(fnames)))
+    logs_file.write("\n")
+    logs_file.write("Longest root-leaf path: " + str(longest_path) + ".")
+  '''
 
   return max_distance_duplicates, max_distance, min_distance, silhouette_score, error_percentage, avg_error_scores, stdev_for_equal_scores
   
-def generate_tree_visualization(tree_clusters, cluster_summaries, sample_label_colors, color_codes, path_trees_json, out_path_javascript, url, open_html=False):
-  # Write the javascript file with matching clusters. 
+def generate_tree_visualization(tree_clusters, cluster_summaries, sample_label_colors, color_codes, path_trees_json, out_path_javascript):
+  # Write the javascript file with matching clusters.
   if path_trees_json and os.path.exists(path_trees_json):
-    with open(path_trees_json) as json_file:
-      trees = json.load(json_file)
+    json_file = open(path_trees_json, "r")
+    json_data = json_file.read().split('=')[1]
+    trees = json.loads(json_data)
+
+    #with open(path_trees_json) as json_file:
+      #trees = json.load(json_file)
 
     importer = JsonImporter()
     exporter = JsonExporter(indent=2, sort_keys=False)
@@ -438,27 +473,13 @@ def generate_tree_visualization(tree_clusters, cluster_summaries, sample_label_c
 
         # Add metadata.
         tree_clusters_js[first_sample]["metadata"] = sample_label_colors.loc[cluster, :].T.to_dict()
-        #for sample in tree_clusters_js[first_sample]["metadata"]:
-        #  tree_clusters_js[first_sample]["metadata"][sample] = {'VitalStatus': tree_clusters_js[first_sample]["metadata"][sample]['VitalStatus']}
-        #tree_clusters_js[first_sample]["metadata_color_codes"] = {'VitalStatus': color_codes["VitalStatus"]} #color_codes
-
         tree_clusters_js[first_sample]["metadata_color_codes"] = color_codes
         tree_clusters_js[first_sample]["cluster_summary"] = cluster_summaries[idx]
 
-    print("Writing javascript trees to", out_path_javascript)
     file = open(out_path_javascript, "w")
     file.write("sample_map=")
     file.write(json.dumps(tree_clusters_js))
     file.close()
-
-    if open_html:
-      chrome_path = 'open -a /Applications/Google\ Chrome.app %s'
-      path_split = os.path.dirname(out_path_trees_json).split("_")
-      cancer_type = path_split[-3]
-      threshold = path_split[-2]
-      tree_type = path_split[-1]
-      url = "file:///Users/mdragan/Downloads/tupro_cohort_analysis/my-tupro/tree_embeddings/visualize_trees/visualize_all_" + tree_type + "_trees_" + cancer_type + "_" + threshold + ".html"
-      webbrowser.get(chrome_path).open(url)
 
 ###
 # Main

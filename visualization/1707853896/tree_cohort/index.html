@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<head>
+<link rel="stylesheet" type="text/css" href="css/style.css">
+<link href="css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="dependencies/font-awesome.min.css">
+<!-- Load the javascript libraries -->    
+<script src="dependencies/jquery.min.js"></script>
+<script src="dependencies/bootstrap.min.js"></script>	
+<script src="dependencies/d3.v4.min.js"></script>
+<script src="utils.js"></script>
+<script src="div_container_utils.js"></script>
+<script src="display_tree.js"></script>
+
+</head>
+
+<body style="margin-top: 5px; margin-left: 5px; margin-right: 5px;">
+
+<script>
+loadSampleMap("/Users/mdragan/Downloads/tupro_cohort_analysis/oncotree2vec/src/../data/modes_of_evolution/oncotree2vec_1682482325_trees-rob/trees.json")
+
+function display_metadata(document, map) {
+
+  var table = document.createElement("table")
+  table.style.cssFloat = "left"
+  table.style.margin = "20px"
+
+  first_row = true
+
+  for (var row in map){
+    if(first_row) {
+      first_row = false
+      var tr = document.createElement('TR');
+      table.appendChild(tr);
+      table.style.tableLayout="fixed"
+      var td = document.createElement('TD');
+      tr.appendChild(td)
+      td.appendChild(document.createTextNode(""))
+      for (var col in map[row]){
+        var td = document.createElement('TD');
+        td.appendChild(document.createTextNode(col));
+        td.style.transform = "rotate(-90deg)"
+        td.height='80'
+        td.width='20'
+        tr.appendChild(td)
+      }
+    }
+
+    var tr = document.createElement('TR');
+    table.appendChild(tr);
+    var td = document.createElement('TD');
+    tr.appendChild(td)
+    td.appendChild(document.createTextNode(row));
+    for (var col in metadata[row]){
+      var td = document.createElement('TD');
+      td.width='10'
+      td.style.backgroundColor=map[row][col]
+      td.appendChild(document.createTextNode(""));
+      tr.appendChild(td)
+    }
+  }
+  document.body.appendChild(table);
+}
+
+function display_color_codes(document, map) {
+
+  var table = document.createElement("table")
+  table.style.cssFloat = "left"
+  table.style.margin = "20px"
+
+  max_num_columns = 0
+  for (var row in map){
+    max_num_columns = Math.max(max_num_columns, (map[row].size))
+  }
+
+  for (var row in map){
+    var tr = document.createElement('TR');
+    table.appendChild(tr);
+    var td = document.createElement('TD');
+    tr.appendChild(td)
+    td.appendChild(document.createTextNode(row));
+    td.style.fontSize = "10px"
+
+    for (var col in map[row]){
+      var td = document.createElement('TD');
+      td.style.backgroundColor=map[row][col]
+      td.style.textAlign="center"
+      td.style.fontSize = "8px"
+      td.style.color="white"
+      td.appendChild(document.createTextNode(col));
+      tr.appendChild(td)
+    }
+  }
+  document.body.appendChild(table);
+  table.style.cssFloat = "none"
+}
+
+sleep(2000).then(() => {
+
+  sample_map = eval("sample_map")
+  tree = "event_tree"
+
+  for (var sample in sample_map){
+    console.log(sample)
+    sample_data = objectToMap(sample_map[sample])
+
+    trees_json = Object.fromEntries(objectToMap(sample_data.get("trees")))
+    /*
+    metadata = Object.fromEntries(objectToMap(sample_data.get("metadata")))
+    metadata_color_codes = Object.fromEntries(objectToMap(sample_data.get("metadata_color_codes")))
+    display_metadata(document, metadata)
+    var elem = document.createElement("br");
+    document.body.appendChild(elem);
+    display_color_codes(document, metadata_color_codes)
+    */
+
+    trees_json = Object.fromEntries(objectToMap(sample_data.get("trees")))
+    console.log(trees_json)
+    for (var idx in trees_json) {
+      display_tree(trees_json[idx]["sample_name"], trees_json[idx], [])
+    }
+
+    /*var elem = document.createElement("br");
+    document.body.appendChild(elem);
+    var elem = document.createElement("hr");
+    elem.setAttribute("width", "100%");
+    elem.setAttribute("size", "20px");
+    elem.setAttribute("color", "black");
+    document.body.appendChild(elem);
+    var elem = document.createElement("br");
+    document.body.appendChild(elem);*/
+  }
+})
+
+</script>
+
+
+</body>

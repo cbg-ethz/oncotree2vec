@@ -1,0 +1,6 @@
+Vocabulary parameters: {"wlk_sizes": [1, 2, 3], "individual_nodes": 0, "neighborhoods": 0, "non_adjacent_pairs": 0, "mutually_exclusive_pairs": 0, "direct_edges": 0, "structure": 1, "root_child_relations": 0, "root_label": 0, "ignore_label": null, "remove_unique_words": false}
+
+Number of trees:43.0
+Longest root-leaf path: 14.
+Vocabulary size: 110.5 words.
+Recommended embedding size: 32.
