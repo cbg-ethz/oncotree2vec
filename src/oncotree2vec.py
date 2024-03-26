@@ -251,7 +251,7 @@ def parse_args():
     args.set_defaults(use_package=False)
 
     args.add_argument('--remove_unique_words', action='store_true')
-    args.set_defaults(remove_unique_words=False)
+    args.set_defaults(remove_unique_words=True)
 
     return args.parse_args()
 
