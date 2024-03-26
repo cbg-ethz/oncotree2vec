@@ -166,6 +166,7 @@ def dump_sg2vec_str (fname, max_h, g, vocabulary_params):
 
     # Add labels construted around each node.
     has_non_unique_words = False
+    unique_word = None
     for n,d in g.nodes(data=True):
       # Neighborhood labels
       if vocabulary_params["neighborhoods"]:
@@ -174,6 +175,7 @@ def dump_sg2vec_str (fname, max_h, g, vocabulary_params):
           if i not in vocabulary_params["wlk_sizes"]:
             continue
           if vocabulary_params["remove_unique_words"] and word_counts[d['neighborhood_label'][i]] <= 2:
+            unique_word = d['neighborhood_label'][i]
             continue
           if i == 0: # individual nodes
             if d['neighborhood_label'][i] != str(RELABELED_ROOT_LABEL):
@@ -192,6 +194,7 @@ def dump_sg2vec_str (fname, max_h, g, vocabulary_params):
           if i == 0:# or i == 1:
             assert False
           if vocabulary_params["remove_unique_words"] and word_counts[d['structure_label'][i]] <= 2:
+            unique_word = d['structure_label'][i]
             continue
           write_labels_to_file(d['structure_label'][i], "structure_" + str(i), fh_vocabulary, fh_vocabulary_legend)
           has_non_unique_words = True
@@ -210,6 +213,7 @@ def dump_sg2vec_str (fname, max_h, g, vocabulary_params):
       if vocabulary_params["non_adjacent_pairs"]:
         for label in d['nonadjacent_path_pair_labels']:
           if word_counts[label] <= 2: # remove unique words
+            unique_word = label
             continue
           write_labels_to_file(label, "nonadjacent_path_pair", fh_vocabulary, fh_vocabulary_legend)
           has_non_unique_words = True
@@ -222,10 +226,11 @@ def dump_sg2vec_str (fname, max_h, g, vocabulary_params):
       if vocabulary_params["direct_edges"]:
         for label in d['direct_edge_labels']:
           if word_counts[label] <= 2: # remove unique words
+            unique_word = label
             continue
           if not(vocabulary_params["neighborhoods"] and 1 in vocabulary_params["wlk_sizes"] and g.degree(n) == 1):
             write_labels_to_file(label, "direct_edge", fh_vocabulary, fh_vocabulary_legend) 
-          has_non_unique_words = True
+            has_non_unique_words = True
           for label_copy in multiply_label(vocabulary_params["direct_edges"]-1, label):
             write_labels_to_file(label_copy, "direct_edge_copy", fh_vocabulary, fh_vocabulary_legend)
 
@@ -233,6 +238,7 @@ def dump_sg2vec_str (fname, max_h, g, vocabulary_params):
     if vocabulary_params["root_child_relations"]:
       for label in g.nodes['0']['root_child_relations']:
         if word_counts[label] <= 2:
+          unique_word = label
           continue
         write_labels_to_file(label, "root_child_relations", fh_vocabulary, fh_vocabulary_legend)
         has_non_unique_words = True
@@ -243,6 +249,7 @@ def dump_sg2vec_str (fname, max_h, g, vocabulary_params):
     if vocabulary_params["mutually_exclusive_pairs"]:
       for label in mutually_exclusive_pairs[g]:
         if word_counts[label] <= 2: # remove unique words
+          unique_word = label
           continue
         write_labels_to_file(label, "mutually_exclusive", fh_vocabulary, fh_vocabulary_legend)
         has_non_unique_words = True
@@ -253,11 +260,11 @@ def dump_sg2vec_str (fname, max_h, g, vocabulary_params):
     pd.DataFrame.from_dict(data=label_tags, orient='index').to_csv(label_legend_filename, header=False)
 
     if vocabulary_params["remove_unique_words"] and not has_non_unique_words:
-      write_labels_to_file(d['neighborhood_label'][0], "single_node", fh_vocabulary, fh_vocabulary_legend)
+      write_labels_to_file(unique_word, "unique_word", fh_vocabulary, fh_vocabulary_legend)
 
     if os.path.isfile(fname+'.tmpg'):
         os.system('rm '+fname+'.tmpg')
-    
+
 def print_node_labels(g):
   print(g.nodes())
   print([g.nodes[node] for node in g.nodes()])
@@ -286,7 +293,7 @@ def wlk_relabel_and_dump_memory_version(fnames, max_h, vocabulary_params, node_l
     global mutually_exclusive_pairs
     global RELABELED_LABEL_TO_IGNORE
     global word_counts
- 
+
     t0 = time()
     graphs = [nx.read_gexf(fname) for fname in fnames]
     print('loaded all graphs in {} sec'.format(round(time() - t0, 2)))
