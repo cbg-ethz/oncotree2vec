@@ -260,6 +260,8 @@ def dump_sg2vec_str (fname, max_h, g, vocabulary_params):
     pd.DataFrame.from_dict(data=label_tags, orient='index').to_csv(label_legend_filename, header=False)
 
     if vocabulary_params["remove_unique_words"] and not has_non_unique_words:
+      if not unique_word:
+        unique_word = d['neighborhood_label'][0]
       write_labels_to_file(unique_word, "unique_word", fh_vocabulary, fh_vocabulary_legend)
 
     if os.path.isfile(fname+'.tmpg'):
