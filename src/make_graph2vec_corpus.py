@@ -24,6 +24,11 @@ class IndexGenerator:
     self.idx = self.idx + 1
     return self.idx - 1
 
+def add_unique_word(node_label_map):
+  next_value = max([int(x) for x in list(node_label_map.values())]) + 10
+  node_label_map[next_value] = next_value
+  return next_value
+
 # Reserved node labels.
 RELABELED_ROOT_LABEL = -1
 RELABELED_LABEL_TO_IGNORE = -1
@@ -159,6 +164,7 @@ def dump_sg2vec_str (fname, max_h, g, vocabulary_params):
     global mutually_exclusive_pairs
     global RELABELED_ROOT_LABEL, RELABELED_LABEL_TO_IGNORE
     global word_counts
+    global node_label_map
 
     opfname = fname + '.g2v' + str(max_h)
     fh_vocabulary = open(opfname,'w')
@@ -170,7 +176,7 @@ def dump_sg2vec_str (fname, max_h, g, vocabulary_params):
     for n,d in g.nodes(data=True):
       # Neighborhood labels
       if vocabulary_params["neighborhoods"]:
-        for i in d['neighborhood_label'].keys():
+        for i in d['neighborhood_label'].keys(): # TODO (this is redundant).
           # Add label tag.
           if i not in vocabulary_params["wlk_sizes"]:
             continue
@@ -200,14 +206,15 @@ def dump_sg2vec_str (fname, max_h, g, vocabulary_params):
           has_non_unique_words = True
 
       # Repeat labels for individual nodes
-      if not vocabulary_params["remove_unique_words"]:
-        if vocabulary_params["individual_nodes"]:
-          if str(d['neighborhood_label'][0]) == str(RELABELED_LABEL_TO_IGNORE):
-            break
-          for label_copy in multiply_label(vocabulary_params["individual_nodes"], d['neighborhood_label'][0]):
-            if d['neighborhood_label'][0] != str(RELABELED_ROOT_LABEL):
+      if vocabulary_params["individual_nodes"]:
+        if (str(d['neighborhood_label'][0]) != str(RELABELED_ROOT_LABEL) and
+            str(d['neighborhood_label'][0]) != str(RELABELED_LABEL_TO_IGNORE)):
+          if vocabulary_params["remove_unique_words"] and word_counts[d['neighborhood_label'][0]] <= 2:
+            unique_word = d['neighborhood_label'][0]
+          else:
+            has_non_unique_words = True
+            for label_copy in multiply_label(vocabulary_params["individual_nodes"], d['neighborhood_label'][0]):
               write_labels_to_file(label_copy, "single_node_copy", fh_vocabulary, fh_vocabulary_legend)
-              has_non_unique_words = True
     
       # Nonadjacent_path_pair_labels: exclude root, the current node and the ancester.
       if vocabulary_params["non_adjacent_pairs"]:
@@ -219,7 +226,6 @@ def dump_sg2vec_str (fname, max_h, g, vocabulary_params):
           has_non_unique_words = True
           for label_copy in multiply_label(vocabulary_params["non_adjacent_pairs"]-1, label):
              write_labels_to_file(label_copy, "nonadjacent_path_pair_copy", fh_vocabulary, fh_vocabulary_legend)
-
 
       # Direct_edge_labels: If no neighborhoods are considered, the add all the direct edges. Else, add only
       # the edges between nodes with node degree > 1 (the others are covered in the neighborhoods).
@@ -261,7 +267,7 @@ def dump_sg2vec_str (fname, max_h, g, vocabulary_params):
 
     if vocabulary_params["remove_unique_words"] and not has_non_unique_words:
       if not unique_word:
-        unique_word = d['neighborhood_label'][0]
+        unique_word = add_unique_word(node_label_map)
       write_labels_to_file(unique_word, "unique_word", fh_vocabulary, fh_vocabulary_legend)
 
     if os.path.isfile(fname+'.tmpg'):
