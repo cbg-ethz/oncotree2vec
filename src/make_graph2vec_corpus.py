@@ -219,31 +219,31 @@ def dump_sg2vec_str (fname, max_h, g, vocabulary_params):
       # Nonadjacent_path_pair_labels: exclude root, the current node and the ancester.
       if vocabulary_params["non_adjacent_pairs"]:
         for label in d['nonadjacent_path_pair_labels']:
-          if word_counts[label] <= 2: # remove unique words
+          if vocabulary_params["remove_unique_words"] and word_counts[label] <= 2: # remove unique words
             unique_word = label
             continue
-          write_labels_to_file(label, "nonadjacent_path_pair", fh_vocabulary, fh_vocabulary_legend)
+          write_labels_to_file(label, "co_occurence", fh_vocabulary, fh_vocabulary_legend)
           has_non_unique_words = True
           for label_copy in multiply_label(vocabulary_params["non_adjacent_pairs"]-1, label):
-             write_labels_to_file(label_copy, "nonadjacent_path_pair_copy", fh_vocabulary, fh_vocabulary_legend)
+             write_labels_to_file(label_copy, "co_occurence_copy", fh_vocabulary, fh_vocabulary_legend)
 
       # Direct_edge_labels: If no neighborhoods are considered, the add all the direct edges. Else, add only
       # the edges between nodes with node degree > 1 (the others are covered in the neighborhoods).
       if vocabulary_params["direct_edges"]:
         for label in d['direct_edge_labels']:
-          if word_counts[label] <= 2: # remove unique words
+          if vocabulary_params["remove_unique_words"] and word_counts[label] <= 2: # remove unique words
             unique_word = label
             continue
           if not(vocabulary_params["neighborhoods"] and 1 in vocabulary_params["wlk_sizes"] and g.degree(n) == 1):
-            write_labels_to_file(label, "direct_edge", fh_vocabulary, fh_vocabulary_legend) 
+            write_labels_to_file(label, "co_occurence", fh_vocabulary, fh_vocabulary_legend) 
             has_non_unique_words = True
           for label_copy in multiply_label(vocabulary_params["direct_edges"]-1, label):
-            write_labels_to_file(label_copy, "direct_edge_copy", fh_vocabulary, fh_vocabulary_legend)
+            write_labels_to_file(label_copy, "co_occurence_copy", fh_vocabulary, fh_vocabulary_legend)
 
     # Add roo-child relations.
     if vocabulary_params["root_child_relations"]:
       for label in g.nodes['0']['root_child_relations']:
-        if word_counts[label] <= 2:
+        if vocabulary_params["remove_unique_words"] and word_counts[label] <= 2:
           unique_word = label
           continue
         write_labels_to_file(label, "root_child_relations", fh_vocabulary, fh_vocabulary_legend)
@@ -254,13 +254,13 @@ def dump_sg2vec_str (fname, max_h, g, vocabulary_params):
     # Add mutually exclusive pairs.
     if vocabulary_params["mutually_exclusive_pairs"]:
       for label in mutually_exclusive_pairs[g]:
-        if word_counts[label] <= 2: # remove unique words
+        if vocabulary_params["remove_unique_words"] and word_counts[label] <= 2: # remove unique words
           unique_word = label
           continue
         write_labels_to_file(label, "mutually_exclusive", fh_vocabulary, fh_vocabulary_legend)
         has_non_unique_words = True
         for label_copy in multiply_label(vocabulary_params["mutually_exclusive_pairs"]-1, label):
-          write_labels_to_file(label_copy, "mutually_exclusive", fh_vocabulary, fh_vocabulary_legend)
+          write_labels_to_file(label_copy, "mutually_exclusive_copy", fh_vocabulary, fh_vocabulary_legend)
 
     label_legend_filename = os.path.join(os.path.dirname(fname), "label_legend.csv")
     pd.DataFrame.from_dict(data=label_tags, orient='index').to_csv(label_legend_filename, header=False)
@@ -370,7 +370,7 @@ def wlk_relabel_and_dump_memory_version(fnames, max_h, vocabulary_params, node_l
           reachable_node_label = get_node_label(g, reachable_node)
           if str(reachable_node_label) == str(RELABELED_LABEL_TO_IGNORE):
             continue
-          feature = "_".join([reachable_node_label, node_label, "na-pair-path"])
+          feature = "_".join([reachable_node_label, node_label, "co-occurence"])
           g.nodes[node]['nonadjacent_path_pair_labels'].append(feature)
           update_word_counts(feature, word_counts)    
 
@@ -387,7 +387,7 @@ def wlk_relabel_and_dump_memory_version(fnames, max_h, vocabulary_params, node_l
         ancester_label = get_node_label(g, ancester)
         if str(ancester_label) == str(RELABELED_LABEL_TO_IGNORE):
           continue
-        feature = "_".join([ancester_label, node_label, "direct-edge"])
+        feature = "_".join([ancester_label, node_label, "co-occurence"])
         g.nodes[node]['direct_edge_labels'].append(feature)
         update_word_counts(feature, word_counts)    
 
