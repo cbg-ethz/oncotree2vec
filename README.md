@@ -41,7 +41,7 @@ kaleido-core       0.1.0
 ```
 $ cd src ; python oncotree2vec.py -h
 
-usage: graph2vec [-h] -c CORPUS [-o OUTPUT_DIR] [-b BATCH_SIZE] [-e EPOCHS] [-d EMBEDDING_SIZE] [-neg NUM_NEGSAMPLE] [-lr LEARNING_RATE]
+usage: oncotree2vec [-h] -c CORPUS [-o OUTPUT_DIR] [-b BATCH_SIZE] [-e EPOCHS] [-d EMBEDDING_SIZE] [-neg NUM_NEGSAMPLE] [-lr LEARNING_RATE]
                  [--wlk_sizes [WLK_SIZES ...]] [-s SUFFIX] [-x0 AUGMENT_INDIVIDUAL_NODES] [-x1 AUGMENT_NEIGHBORHOODS] [-x2 AUGMENT_PAIRWISE_RELATIONS]
                  [-x3 AUGMENT_DIRECT_EDGES] [-x4 AUGMENT_MUTUALLY_EXCLUSIVE_RELATIONS] [-x5 AUGMENT_TREE_STRUCTURE] [-x6 AUGMENT_ROOT_CHILD_RELATIONS]
                  [-rlabel ROOT_LABEL] [-ilabel IGNORE_LABEL] [--remove_unique_words]

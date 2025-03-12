@@ -3,7 +3,7 @@
 import argparse,os,logging,time
 from utils import get_files
 from train_utils import train_skipgram
-from make_graph2vec_corpus import *
+from make_corpus import *
 from time import time
 import random
 
@@ -188,7 +188,7 @@ def main(args):
 
 
 def parse_args():
-    args = argparse.ArgumentParser("graph2vec")
+    args = argparse.ArgumentParser("oncotree2vec")
     args.add_argument("-c","--corpus", required=True, 
                       help="Path to directory containing graph files to be used for  clustering")
 
