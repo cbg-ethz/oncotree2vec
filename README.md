@@ -3,7 +3,7 @@
 <img src="./docs/logo.png" width="300" height="auto">
 </div>
 
-[![Bioinformatics](https://img.shields.io/badge/BioRxiv-10.1101/2023.11.16.567363-blue.svg)](https://doi.org/10.1093/bioinformatics/btae214)
+[![Bioinformatics](https://img.shields.io/badge/Bioinformatics-10.1101/2023.11.16.567363-blue.svg)](https://doi.org/10.1093/bioinformatics/btae214)
 # oncotree2vec – A method for embedding and clustering of tumor mutation trees
 
 
