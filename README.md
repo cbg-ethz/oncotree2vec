@@ -52,10 +52,6 @@ usage: oncotree2vec [-h] -c CORPUS -e EPOCHS [--wlk_sizes [WLK_SIZES ...]] [-x0 
   -e EPOCHS, --epochs EPOCHS
                         Number of iterations the whole dataset of trees is traversed
 
-  -f FILENAME_SAMPLENAME_MAPPING, --filename_samplename_mapping FILENAME_SAMPLENAME_MAPPING
-                        Path to csv file containing the mapping between the GEXF filenames and the tree sample
-                        names.
-
 * Tree vocabulary related arguments:
   --wlk_sizes [WLK_SIZES ...]
                         Seizes of WL kernel (i.e., degree of rooted subtree features to be considered for
