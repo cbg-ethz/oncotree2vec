@@ -128,7 +128,6 @@ def main(args):
         )
         logging.info("dumped sg2vec sentences in {} sec.".format(time() - t0))
 
-
     if args.use_package:
 
         def save_embeddings(output_path, model, files, tree_mapping, dimensions):
@@ -270,7 +269,7 @@ def parse_args():
     args.add_argument(
         "-e",
         "--epochs",
-        default=1000,
+        required=True,
         type=int,
         help="Number of iterations the whole dataset of trees is traversed",
     )
@@ -399,7 +398,12 @@ def parse_args():
     args.add_argument("--no_use_package", dest="use_package", action="store_false")
     args.set_defaults(use_package=False)
 
-    args.add_argument("--remove_unique_words", action="store_true")
+    args.add_argument(
+        "--remove_unique_words",
+        action="store_true",
+        help="Discard from the vocabulary the words which are unique across the entire cohort. "
+        "This increases the contribution of rare word matches encoded in the embedding.",
+    )
     args.add_argument(
         "--no_remove_unique_words",
         dest="remove_unique_words",
@@ -407,7 +411,12 @@ def parse_args():
     )
     args.set_defaults(remove_unique_words=True)
 
-    args.add_argument("--generate_heatmaps", action="store_true")
+    args.add_argument(
+        "--generate_heatmaps",
+        action="store_true",
+        help="Generate hierarchically-clustered heatmap of tree similarities based on "
+        "the learned embeddings after every 100 iterations.",
+    )
     args.add_argument(
         "--no_generate_heatmaps", dest="generate_heatmaps", action="store_false"
     )
