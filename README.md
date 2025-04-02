@@ -19,7 +19,7 @@
 
 ## Requirements
 
-The codebase is implemented in Python (vesion at least 3.11), with the following dependencies:
+The codebase is implemented in Python (at least version 3.11), with the following dependencies:
 ```
 anytree            2.8.0
 numpy              1.23.5  
@@ -38,15 +38,15 @@ kaleido-core       0.1.0
 ```
 $ cd src ; python oncotree2vec.py -h
 
-usage: oncotree2vec [-h] **-c CORPUS -e EPOCHS [--wlk_sizes [WLK_SIZES ...]] [-x0 AUGMENT_INDIVIDUAL_NODES]**
-                    **[-x1 AUGMENT_NEIGHBORHOODS] [-x2 AUGMENT_PAIRWISE_RELATIONS] [-x3 AUGMENT_DIRECT_EDGES]**
-                    **[-x4 AUGMENT_MUTUALLY_EXCLUSIVE_RELATIONS] [-x5 AUGMENT_TREE_STRUCTURE]**
-                    **[-x6 AUGMENT_ROOT_CHILD_RELATIONS]** [-rlabel ROOT_LABEL] [-ilabel IGNORE_LABEL]
+usage: oncotree2vec [-h] -c CORPUS -e EPOCHS [--wlk_sizes [WLK_SIZES ...]] [-x0 AUGMENT_INDIVIDUAL_NODES]
+                    [-x1 AUGMENT_NEIGHBORHOODS] [-x2 AUGMENT_PAIRWISE_RELATIONS] [-x3 AUGMENT_DIRECT_EDGES]
+                    [-x4 AUGMENT_MUTUALLY_EXCLUSIVE_RELATIONS] [-x5 AUGMENT_TREE_STRUCTURE]
+                    [-x6 AUGMENT_ROOT_CHILD_RELATIONS] [-rlabel ROOT_LABEL] [-ilabel IGNORE_LABEL]
                     [-d EMBEDDING_SIZE] [-neg NUM_NEGSAMPLE] [-lr LEARNING_RATE] [-b BATCH_SIZE]
                     [-threshold HEATMAP_CONTRAST_THRESHOLD] [--remove_unique_words] [--generate_heatmaps] 
                     [-f FILENAME_SAMPLENAME_MAPPING] [-o OUTPUT_DIR] [-s SUFFIX]
 
-**Mandatory arguments:**
+* Mandatory arguments:
   -c CORPUS, --corpus CORPUS
                         Path to directory containing tree files in GEXF format to be used for clustering
   -e EPOCHS, --epochs EPOCHS
@@ -56,7 +56,7 @@ usage: oncotree2vec [-h] **-c CORPUS -e EPOCHS [--wlk_sizes [WLK_SIZES ...]] [-x
                         Path to csv file containing the mapping between the GEXF filenames and the tree sample
                         names.
 
-**Tree vocabulary related arguments:**
+* Tree vocabulary related arguments:
   --wlk_sizes [WLK_SIZES ...]
                         Seizes of WL kernel (i.e., degree of rooted subtree features to be considered for
                         representation learning)
@@ -83,7 +83,7 @@ usage: oncotree2vec [-h] **-c CORPUS -e EPOCHS [--wlk_sizes [WLK_SIZES ...]] [-x
                         Discard from the vocabulary the words which are unique across the entire cohort. This
                         increases the contribution of rare word matches encoded in the embedding.
 
-**ML model related arguments:**
+* ML model related arguments:
   -b BATCH_SIZE, --batch_size BATCH_SIZE
                         Number of samples per training batch
   -d EMBEDDING_SIZE, --embedding_size EMBEDDING_SIZE
@@ -94,7 +94,7 @@ usage: oncotree2vec [-h] **-c CORPUS -e EPOCHS [--wlk_sizes [WLK_SIZES ...]] [-x
                         Learning rate to optimize the loss function
 
 
-**Output visualization related aguments:**
+* Output visualization related aguments:
   -threshold HEATMAP_CONTRAST_THRESHOLD, --heatmap_contrast_threshold HEATMAP_CONTRAST_THRESHOLD
                         Numerical threshold in the range 0 and 1 indicating the cutoff for the hierarhical
                         clustering w.r.t. the maximum cosine distance between the samples inside each cluster
@@ -103,7 +103,7 @@ usage: oncotree2vec [-h] **-c CORPUS -e EPOCHS [--wlk_sizes [WLK_SIZES ...]] [-x
                         embeddings after every 100 iterations.
 
 
-**Other arguments:**
+* Other arguments:
   -o OUTPUT_DIR, --output_dir OUTPUT_DIR
                         Path to directory for storing output embeddings
 
