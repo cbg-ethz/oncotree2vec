@@ -142,23 +142,25 @@ The output files are generated in the `/embeddings` directory. For each run a ne
 
 <ul>
 After every 100 iterations the following files are generated:
-	<li> \*embeddings.csv (the learned embeddings)
- 	<li> \*heatmap.png (hierarchically-clustered heatmap of tree similarities based on the learned embeddings)
-        <li> \*heatmap_sample_order.csv
-	<li> \*oncotreevis.json (results in a JSON format that can be directly visualised with [oncotreeVIS](https://cbg-ethz.github.io/oncotreeVIS))
+	<li> embeddings.csv (the learned embeddings)
+ 	<li> heatmap.png (hierarchically-clustered heatmap of tree similarities based on the learned embeddings)
+        <li> heatmap_sample_order.csv
+	<li> oncotreevis.json (results in a JSON format that can be directly visualised with [oncotreeVIS](https://cbg-ethz.github.io/oncotreeVIS))
 
 In the last iteration additional output files are generated:
- 	<li> \*vocabulary_sizes.png (heatmap where the pixels reflect the size of the vocabulary word intersection between each pair of trees)
-	<li> \*umap.png (using the --heatmap_contrast_threshold as cutoff for the hierarchical clustering)
-	<li> \*clusters.csv (cutoff set in --heatmap_contrast_threshold)
-	<li> \*loss_values.png (plot with the loss value after every iteration)
-	<li> \*other_scores.png (minimum and maximum cosine distance scores, silhouette score for the clusters obtained using a cutoff set through the --heatmap_contrast_threshold argument -- 0.5 by default).
+ 	<li> vocabulary_sizes.png (heatmap where the pixels reflect the size of the vocabulary word intersection between each pair of trees)
+	<li> umap.png (using the --heatmap_contrast_threshold as cutoff for the hierarchical clustering)
+	<li> clusters.csv (cutoff set in --heatmap_contrast_threshold)
+	<li> loss_values.png (plot with the loss value after every iteration)
+	<li> other_scores.png (minimum and maximum cosine distance scores, silhouette score for the clusters obtained using a cutoff set through the --heatmap_contrast_threshold argument -- 0.5 by default).
+
+<\ul>
 
 For large datasets generating the heatmap can take a considerably long time, therefore the user can choose to skip the heatmap generation using the --no_generate_heatmaps argument. 
 
 The `loss_values` and `other_scores` plots can help tracking and improving the performance of the training by tracking the steadiness of the residual function and the minimum and maximum cosine distance scores between control samples in the cohort for choosing the optimal number of iterations. 
 
-## Visualize the output tree clusters
+### Visualize the output tree clusters
 
 In order to generate a visualization for the outut after a certain number of iterations using a different cutoff (default threshld id 0.5) use the folloing command:
 
