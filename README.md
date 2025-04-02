@@ -140,8 +140,8 @@ Oncotree2vec learns tree embeddings in order to assess the similarity between di
 
 The output files are generated in the `/embeddings` directory. For each run a new directory with a tiestamp prefix is created.
 
-After every 100 iterations the following files are generated:
 <ul>
+After every 100 iterations the following files are generated:
 	<li> \*embeddings.csv (the learned embeddings)
  	<li> \*heatmap.png (hierarchically-clustered heatmap of tree similarities based on the learned embeddings)
         <li> \*heatmap_sample_order.csv
