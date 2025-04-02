@@ -114,7 +114,7 @@ usage: oncotree2vec [-h] -c CORPUS -e EPOCHS [--wlk_sizes [WLK_SIZES ...]] [-x0 
 ## Usage example
 ----------
 ```
-$ cd src ; python oncotree2vec.py --corpus ../data/aml-mutation-trees/oncotree2vec_1694959245_aml-mutation-trees_event --embedding_size 128 --wlk_sizes 1 2 3 --augment_tree_structure 0 --augment_neighborhoods 1 --augment_individual_nodes 5 --augment_root_child_relations 20 --augment_direct_edges 10 --augment_pairwise_relations 10 --augment_mutually_exclusive_relations 10 --epochs 20000
+$ cd src ; python oncotree2vec.py --corpus ../data/aml-mutation-trees/trees_morita_2020 --embedding_size 128 --wlk_sizes 1 2 3 --augment_tree_structure 0 --augment_neighborhoods 1 --augment_individual_nodes 5 --augment_root_child_relations 20 --augment_direct_edges 10 --augment_pairwise_relations 10 --augment_mutually_exclusive_relations 10 --epochs 20000
 ```
 
 
