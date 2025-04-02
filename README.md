@@ -41,7 +41,8 @@ python oncotree2vec.py -h
 usage: oncotree2vec [-h] -c CORPUS -e EPOCHS [--wlk_sizes [WLK_SIZES ...]] [-x0 AUGMENT_INDIVIDUAL_NODES]
                     [-x1 AUGMENT_NEIGHBORHOODS] [-x2 AUGMENT_PAIRWISE_RELATIONS] [-x3 AUGMENT_DIRECT_EDGES]
                     [-x4 AUGMENT_MUTUALLY_EXCLUSIVE_RELATIONS] [-x5 AUGMENT_TREE_STRUCTURE]
-                    [-x6 AUGMENT_ROOT_CHILD_RELATIONS] [-rlabel ROOT_LABEL] [-ilabel IGNORE_LABEL]
+                    [-x6 AUGMENT_ROOT_CHILD_RELATIONS] [-nlabel GEXF_NODE_ATTRIBUTE_LABEL]
+                    [-rlabel ROOT_LABEL] [-ilabel IGNORE_LABEL]
                     [-d EMBEDDING_SIZE] [-neg NUM_NEGSAMPLE] [-lr LEARNING_RATE] [-b BATCH_SIZE]
                     [-threshold HEATMAP_CONTRAST_THRESHOLD] [--remove_unique_words] [--generate_heatmaps] 
                     [-f FILENAME_SAMPLENAME_MAPPING] [-o OUTPUT_DIR] [-s SUFFIX]
@@ -70,6 +71,8 @@ usage: oncotree2vec [-h] -c CORPUS -e EPOCHS [--wlk_sizes [WLK_SIZES ...]] [-x0 
                         Number of times to augment the vocabulary for the tree structure
   -x6 AUGMENT_ROOT_CHILD_RELATIONS, --augment_root_child_relations AUGMENT_ROOT_CHILD_RELATIONS
                         Number of times to augment the vocabulary for the root-child node relations
+  -nlabel GEXF_NODE_ATTRIBUTE_LABEL, --gexf_node_attribute_label GEXF_NODE_ATTRIBUTE_LABEL
+                        Node attribute label in the GEXF file
   -rlabel ROOT_LABEL, --root_label ROOT_LABEL
                         Label of the neutral node (used for discarding certain node relations)
   -ilabel IGNORE_LABEL, --ignore_label IGNORE_LABEL
@@ -124,4 +127,42 @@ python oncotree2vec.py --corpus ../data/aml-mutation-trees/trees_morita_2020 --e
 python oncotree2vec.py --corpus ../data/modes_of_evolution/trees_noble_2022 --embedding_size 64 --wlk_sizes 1 2 3 --augment_tree_structure 5 --augment_neighborhoods 0 --augment_individual_nodes 0 --augment_root_child_relations 0 --augment_direct_edges 0 --augment_pairwise_relations 0 --augment_mutually_exclusive_relations 0 --epochs 1000 --filename_samplename_mapping ../data/modes_of_evolution/trees_noble_2022/filename_index.csv
 ```
 
+**138 Non-small-cell lung cancer mutation trees (Caravagna et al., 2018)**
+```
+python oncotree2vec.py --corpus ../data/tracerx_lung --embedding_size 128 --wlk_sizes 0 --augment_tree_structure 0 --augment_neighborhoods 0 --augment_individual_nodes 0 --augment_root_child_relations 1 --augment_direct_edges 1 --augment_pairwise_relations 1 --augment_mutually_exclusive_relations 1 --epochs 1000 --filename_samplename_mapping ../data/tracerx_lung/filename_index.csv
+```
 
+## Prepare custom input
+
+Oncotree2vec learns tree embeddings in order to assess the similarity between different mutatin trees, based on the matches between the node labels accross different trees. We use input trees in [GEXF](https://networkx.org/documentation/stable/reference/readwrite/gexf.html) format, where the node labels are specified in the `Label` attribute, as shown in the dataset examples from the [data](https://github.com/cbg-ethz/oncotree2vec/tree/main/data) directory. The name of the GEXF node label attribute (`Label`, by default) can be changed through the --gexf_node_attribute_label argument. The .gexf file extension is required for the input tree. By default the filenames are mapped to the tree sample names. In addition, the user can provide a different mapping between the gexf filenames and the tree samples names using the `--filename_samplename_mapping` argument. 
+
+## Output files
+
+The output files are generated in the `embeddings` directory. For each run a new directory with a tiestamp prefix is created.
+
+After every 100 iterations the following files are generated:
+	- \*embeddings.csv (the learned embeddings)
+ 	- \*heatmap.png (hierarchically-clustered heatmap of tree similarities based on the learned embeddings)
+        - \*heatmap_sample_order.csv
+	- \*oncotreevis.json (results in a JSON format that can be directly visualised with [oncotreeVIS](https://cbg-ethz.github.io/oncotreeVIS))
+
+In the last iteration additional output files are generated:
+	- \*vocabulary_sizes.png (heatmap where the pixels reflect the size of the vocabulary word intersection between each pair of trees)
+	- \*umap.png (using the --heatmap_contrast_threshold as cutoff for the hierarchical clustering)
+	- \*clusters.csv (cutoff set in --heatmap_contrast_threshold)
+	- \*loss_values.png (plot with the loss value after every iteration)
+	- \*other_scores.png (minimum and maximum cosine distance scores, silhouette score for the clusters obtained using a cutoff set through the --heatmap_contrast_threshold argument -- 0.5 by default).
+
+For large datasets generating the heatmap can take a considerably long time, therefore the user can choose to skip the heatmap generation using the --no_generate_heatmaps argument. 
+
+The `loss_values` and `other_scores` plots can help tracking and improving the performance of the training by tracking the steadiness of the residual function and the minimum and maximum cosine distance scores between control samples in the cohort for choosing the optimal number of iterations. 
+
+## Visualize the output tree clusters
+
+In order to generate a visualization for the outut after a certain number of iterations using a different cutoff (default threshld id 0.5) use the folloing command:
+
+```
+python visualize_embeddings.py --in_embeddings ../embeddings/1743606908_trees_morita_2020/1743606908_iter15000_embeddings.csv --corpus_dir../data/aml-mutation-trees/trees_morita_2020 --threshold 0.55
+```
+
+This script also provides the output in a JSON format that can be directly visualised as a clustered tree cohort with [oncotreeVIS](https://cbg-ethz.github.io/oncotreeVIS).
