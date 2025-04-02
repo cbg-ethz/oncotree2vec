@@ -301,19 +301,19 @@ def visualize_embeddings(
     sample_label_colors = None
     color_codes = None
     if (
-        "aml-mutation-trees" in output_dir_name
-        or "aml-trees-etienne" in output_dir_name
+        "trees_morita" in output_dir_name
+        or "trees_etienne" in output_dir_name
     ):
         sample_label_colors, color_codes = parse_metadata_aml_mutation_trees(
             df_distances.index
         )
         ncol = 4
         legend_box_position = (0.22, 0.75)
-    elif "trees-rob" in output_dir_name:
+    elif "trees_noble" in output_dir_name:
         sample_label_colors, color_codes = parse_metadata_rob_trees(df_distances.index)
         ncol = 1
         legend_box_position = (0, 0)
-    elif "tupro-ovarian" in output_dir_name:
+    elif "tupro_ovarian" in output_dir_name:
         sample_label_colors, color_codes = parse_metadata_tupro_ovarian(
             df_distances.index
         )
