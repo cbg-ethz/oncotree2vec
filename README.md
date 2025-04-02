@@ -134,24 +134,28 @@ python oncotree2vec.py --corpus ../data/tracerx_lung --embedding_size 128 --wlk_
 
 ## Prepare custom input
 
-Oncotree2vec learns tree embeddings in order to assess the similarity between different mutatin trees, based on the matches between the node labels accross different trees. We use input trees in [GEXF](https://networkx.org/documentation/stable/reference/readwrite/gexf.html) format, where the node labels are specified in the `Label` attribute, as shown in the dataset examples from the [data](https://github.com/cbg-ethz/oncotree2vec/tree/main/data) directory. The name of the GEXF node label attribute (`Label`, by default) can be changed through the --gexf_node_attribute_label argument. The .gexf file extension is required for the input tree. By default the filenames are mapped to the tree sample names. In addition, the user can provide a different mapping between the gexf filenames and the tree samples names using the `--filename_samplename_mapping` argument. 
+Oncotree2vec learns tree embeddings in order to assess the similarity between different mutatin trees, based on the matches between the node labels accross different trees. We use input trees in [GEXF](https://networkx.org/documentation/stable/reference/readwrite/gexf.html) format, where the node labels are specified in the `Label` attribute, as shown in the dataset examples from the [data](https://github.com/cbg-ethz/oncotree2vec/tree/main/data) directory. The name of the GEXF node label attribute (`Label`, by default) can be changed through the `--gexf_node_attribute_label` argument. The .gexf file extension is required for the input tree. By default the filenames are mapped to the tree sample names. In addition, the user can provide a different mapping between the gexf filenames and the tree samples names using the `--filename_samplename_mapping` argument. 
 
 ## Output files
 
-The output files are generated in the `embeddings` directory. For each run a new directory with a tiestamp prefix is created.
+The output files are generated in the `/embeddings` directory. For each run a new directory with a tiestamp prefix is created.
 
 After every 100 iterations the following files are generated:
-	- \*embeddings.csv (the learned embeddings)
- 	- \*heatmap.png (hierarchically-clustered heatmap of tree similarities based on the learned embeddings)
-        - \*heatmap_sample_order.csv
-	- \*oncotreevis.json (results in a JSON format that can be directly visualised with [oncotreeVIS](https://cbg-ethz.github.io/oncotreeVIS))
+<ul>
+	<li> \*embeddings.csv (the learned embeddings)
+ 	<li> \*heatmap.png (hierarchically-clustered heatmap of tree similarities based on the learned embeddings)
+        <li> \*heatmap_sample_order.csv
+	<li> \*oncotreevis.json (results in a JSON format that can be directly visualised with [oncotreeVIS](https://cbg-ethz.github.io/oncotreeVIS))
+<\ul>
 
 In the last iteration additional output files are generated:
-	- \*vocabulary_sizes.png (heatmap where the pixels reflect the size of the vocabulary word intersection between each pair of trees)
-	- \*umap.png (using the --heatmap_contrast_threshold as cutoff for the hierarchical clustering)
-	- \*clusters.csv (cutoff set in --heatmap_contrast_threshold)
-	- \*loss_values.png (plot with the loss value after every iteration)
-	- \*other_scores.png (minimum and maximum cosine distance scores, silhouette score for the clusters obtained using a cutoff set through the --heatmap_contrast_threshold argument -- 0.5 by default).
+<ul>
+ 	<li> \*vocabulary_sizes.png (heatmap where the pixels reflect the size of the vocabulary word intersection between each pair of trees)
+	<li> \*umap.png (using the --heatmap_contrast_threshold as cutoff for the hierarchical clustering)
+	<li> \*clusters.csv (cutoff set in --heatmap_contrast_threshold)
+	<li> \*loss_values.png (plot with the loss value after every iteration)
+	<li> \*other_scores.png (minimum and maximum cosine distance scores, silhouette score for the clusters obtained using a cutoff set through the --heatmap_contrast_threshold argument -- 0.5 by default).
+<\ul>
 
 For large datasets generating the heatmap can take a considerably long time, therefore the user can choose to skip the heatmap generation using the --no_generate_heatmaps argument. 
 
