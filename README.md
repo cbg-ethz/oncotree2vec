@@ -146,16 +146,13 @@ After every 100 iterations the following files are generated:
  	<li> \*heatmap.png (hierarchically-clustered heatmap of tree similarities based on the learned embeddings)
         <li> \*heatmap_sample_order.csv
 	<li> \*oncotreevis.json (results in a JSON format that can be directly visualised with [oncotreeVIS](https://cbg-ethz.github.io/oncotreeVIS))
-<\ul>
 
 In the last iteration additional output files are generated:
-<ul>
  	<li> \*vocabulary_sizes.png (heatmap where the pixels reflect the size of the vocabulary word intersection between each pair of trees)
 	<li> \*umap.png (using the --heatmap_contrast_threshold as cutoff for the hierarchical clustering)
 	<li> \*clusters.csv (cutoff set in --heatmap_contrast_threshold)
 	<li> \*loss_values.png (plot with the loss value after every iteration)
 	<li> \*other_scores.png (minimum and maximum cosine distance scores, silhouette score for the clusters obtained using a cutoff set through the --heatmap_contrast_threshold argument -- 0.5 by default).
-<\ul>
 
 For large datasets generating the heatmap can take a considerably long time, therefore the user can choose to skip the heatmap generation using the --no_generate_heatmaps argument. 
 
