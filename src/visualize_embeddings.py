@@ -258,8 +258,8 @@ def visualize_embeddings(
         elif "mutual-exclusivity" in output_dir_name:
             group_references = [sample for sample in score_map.keys() if "00" in sample]
         for reference in group_references:
-            score_map[reference].sort(key=lambda x: (-x.rank, x.sample_name))
             # Reverse order by rank, ascendin order by sample name.
+            score_map[reference].sort(key=lambda x: (-x.rank, x.sample_name))
             sample_group = [reference] + [x.sample_name for x in score_map[reference]]
             sample_groups.append(sample_group)
             predefined_order = predefined_order + sample_group
