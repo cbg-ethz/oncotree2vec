@@ -134,7 +134,7 @@ $ python oncotree2vec.py --corpus ../data/modes_of_evolution/trees_noble_2022 --
 ```
 ### Prepare custom input
 
-<p align="justify">Oncotree2vec learns tree embeddings in order to assess the similarity between different mutatin trees, based on the matches between the node labels accross different trees. We use input trees in [GEXF](https://networkx.org/documentation/stable/reference/readwrite/gexf.html) format, where the node labels are specified in the *"Label"* attribute, as shown in the dataset examples from the [data](https://github.com/cbg-ethz/oncotree2vec/tree/main/data) directory. The name of the GEXF node label attribute (*"Label"*, by default) can be changed through the `--gexf_node_attribute_label` argument. The *.gexf* file extension is required for the input files. By default, the tree sample names used correspond to the *.gexf* filenames. The user can provide a different mapping between the *.gexf* filenames and the tree samples names using the `--filename_samplename_mapping` argument.</p> 
+<p align="justify">Oncotree2vec learns tree embeddings in order to assess the similarity between different mutatin trees, based on the matches between the node labels accross different trees. We use input trees in <a href=https://networkx.org/documentation/stable/reference/readwrite/gexf.html>GEXF</a> format, where the node labels are specified in the <i>"Label"</i> attribute, as shown in the dataset examples from the <a href=https://github.com/cbg-ethz/oncotree2vec/tree/main/data>data</a> directory. The name of the GEXF node label attribute (<i>"Label"</i>, by default) can be changed through the <code>--gexf_node_attribute_label</code> argument. The <i>.gexf</i> file extension is required for the input files. By default, the tree sample names used correspond to the <i>.gexf</i> filenames. The user can provide a different mapping between the <i>.gexf</i> filenames and the tree samples names using the <code>--filename_samplename_mapping</code> argument.</p> 
 
 ## Output files
 
@@ -159,12 +159,12 @@ In the last iteration additional output files are generated:
 
 ### Visualize the output tree clusters
 
-In order to generate a visualization for the outut after a certain number of iterations using a different cutoff for the hierarchilcal clustering (default threshold is 0.5) use provide following command:
+<p align="justify">In order to generate a visualization for the output after a certain number of iterations using a different cutoff for the hierarchilcal clustering (default threshold is 0.5) we provide following command:</p>
 
 ```
-python visualize_embeddings.py --in_embeddings ../embeddings/1743606908_trees_morita_2020/1743606908_iter15000_embeddings.csv --corpus_dir../data/aml-mutation-trees/trees_morita_2020 --threshold 0.55
+$ python visualize_embeddings.py --in_embeddings ../embeddings/1743606908_trees_morita_2020/1743606908_iter15000_embeddings.csv --corpus_dir../data/aml-mutation-trees/trees_morita_2020 --threshold 0.55
 ```
 
-This script also generates a JSON file that can be directly uploaded to the [oncotreeVIS](https://cbg-ethz.github.io/oncotreeVIS) web application to visualize the trees at cohort level grouped by cluster.
+<p align="justify">This script also generates a JSON file that can be directly uploaded to the <a href=https://cbg-ethz.github.io/oncotreeVIS>oncotreeVIS</a> web application to visualize the trees at cohort level grouped by cluster.</p>
 
-Please fell free to use your own script to visualize the learned embeddings by directly accessing the *\*embeddings.csv* output file.
+<p align="justify">Please fell free to use your own script to visualize the learned embeddings by directly accessing the <i>\*embeddings.csv</i> output file.</p>
