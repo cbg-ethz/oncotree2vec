@@ -226,7 +226,7 @@ def main(args):
             dir_path,
             "_".join([output_files_prefix, "iter" + str(epochs) + "embeddings.csv"]),
         )
-        + " --corpus_dir"
+        + " --corpus_dir "
         + corpus_dir
         + " --threshold 0.5"
     )
