@@ -480,7 +480,7 @@ if __name__ == "__main__":
         os.path.splitext(args.in_embeddings)[0],
         metric="cosine",
         corpus_dir=args.corpus_dir,
-        clustering_threshold=args.clustering_threshold,
+        clustering_threshold=args.threshold,
         gexf_extn=args.gexf_extn,
         generate_heatmaps=args.generate_heatmaps,
         print_sub_heatmaps=True,
