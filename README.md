@@ -123,47 +123,48 @@ usage: oncotree2vec [-h] -c CORPUS -e EPOCHS [--wlk_sizes [WLK_SIZES ...]] [-x0 
 $ python oncotree2vec.py --corpus ../data/tracerx_lung --embedding_size 128 --wlk_sizes 0 --augment_tree_structure 0 --augment_neighborhoods 0 --augment_individual_nodes 0 --augment_root_child_relations 1 --augment_direct_edges 1 --augment_pairwise_relations 1 --augment_mutually_exclusive_relations 1 --epochs 1000 --filename_samplename_mapping ../data/tracerx_lung/filename_index.csv
 ```
 
-**123 AML point mutation trees (Morita et al. 2020)**
+**123 AML point mutation trees (Morita et al., 2020)**
 ```
 $ python oncotree2vec.py --corpus ../data/aml-mutation-trees/trees_morita_2020 --embedding_size 128 --wlk_sizes 1 2 3 --augment_tree_structure 0 --augment_neighborhoods 1 --augment_individual_nodes 5 --augment_root_child_relations 20 --augment_direct_edges 10 --augment_pairwise_relations 10 --augment_mutually_exclusive_relations 10 --epochs 20000 --filename_samplename_mapping ../data/aml-mutation-trees/trees_morita_2020/filename_index.csv
 ```
 
-**43 tumor evolution trees (Noble et al. 2022)**
+**43 tumor evolution trees (Noble et al., 2022)**
 ```
 $ python oncotree2vec.py --corpus ../data/modes_of_evolution/trees_noble_2022 --embedding_size 64 --wlk_sizes 1 2 3 --augment_tree_structure 5 --augment_neighborhoods 0 --augment_individual_nodes 0 --augment_root_child_relations 0 --augment_direct_edges 0 --augment_pairwise_relations 0 --augment_mutually_exclusive_relations 0 --epochs 1000 --filename_samplename_mapping ../data/modes_of_evolution/trees_noble_2022/filename_index.csv
 ```
 ### Prepare custom input
 
-Oncotree2vec learns tree embeddings in order to assess the similarity between different mutatin trees, based on the matches between the node labels accross different trees. We use input trees in [GEXF](https://networkx.org/documentation/stable/reference/readwrite/gexf.html) format, where the node labels are specified in the *"Label"* attribute, as shown in the dataset examples from the [data](https://github.com/cbg-ethz/oncotree2vec/tree/main/data) directory. The name of the GEXF node label attribute (*"Label"*, by default) can be changed through the `--gexf_node_attribute_label` argument. The *.gexf* file extension is required for the input files. By default, the tree sample names used correspond to the *.gexf* filenames. The user can provide a different mapping between the *.gexf* filenames and the tree samples names using the `--filename_samplename_mapping` argument. 
+<p align="justify">Oncotree2vec learns tree embeddings in order to assess the similarity between different mutatin trees, based on the matches between the node labels accross different trees. We use input trees in [GEXF](https://networkx.org/documentation/stable/reference/readwrite/gexf.html) format, where the node labels are specified in the *"Label"* attribute, as shown in the dataset examples from the [data](https://github.com/cbg-ethz/oncotree2vec/tree/main/data) directory. The name of the GEXF node label attribute (*"Label"*, by default) can be changed through the `--gexf_node_attribute_label` argument. The *.gexf* file extension is required for the input files. By default, the tree sample names used correspond to the *.gexf* filenames. The user can provide a different mapping between the *.gexf* filenames and the tree samples names using the `--filename_samplename_mapping` argument.</p> 
 
 ## Output files
 
 The output files are generated in the `/embeddings` directory. For each run a new directory with a tiestamp prefix is created.
 
 After every 100 iterations the following files are generated:
-- embeddings.csv (the learned embeddings)
-- heatmap.png (hierarchically-clustered heatmap of tree similarities based on the learned embeddings)
-- heatmap_sample_order.csv
-- oncotreevis.json (results in a JSON format that can be directly visualised with [oncotreeVIS](https://cbg-ethz.github.io/oncotreeVIS))
+- \*embeddings.csv (the learned embeddings)
+- \*heatmap.png (hierarchically-clustered heatmap of tree similarities based on the learned embeddings)
+- \*heatmap_sample_order.csv
+- \*oncotreevis.json (results in a JSON format that ca be directly uploaded to the [oncotreeVIS](https://cbg-ethz.github.io/oncotreeVIS) web application to visualize the trees at cohort level grouped by cluster.
 
 In the last iteration additional output files are generated:
-<ul>
-	<li> vocabulary_sizes.png (heatmap where the pixels reflect the size of the vocabulary word intersection between each pair of trees)
-	<li> umap.png (using the --heatmap_contrast_threshold as cutoff for the hierarchical clustering)
-	<li> clusters.csv (cutoff set in --heatmap_contrast_threshold)
-	<li> loss_values.png (plot with the loss value after every iteration)
-	<li> other_scores.png (minimum and maximum cosine distance scores, silhouette score for the clusters obtained using a cutoff set through the --heatmap_contrast_threshold argument -- 0.5 by default).
+- \*vocabulary_sizes.png (heatmap where the pixels reflect the size of the tree vocabulary intersection between each pair of trees)
+- \*umap.png (UMAP where each tree is a dot in the latent space, colored by the corresponding cluster;the clusterig is obtained using a cutoff provided through the `--heatmap_contrast_threshold` argument)
+- \*clusters.csv (clusterig obtained using a cutoff provided through the `--heatmap_contrast_threshold` argument)
+- \*loss_values.png (plot of the residual function for the whole training)
+- \*other_scores.png (minimum and maximum cosine distance scores and silhouette score for the clusters obtained using a cutoff set through the `--heatmap_contrast_threshold` argument).
 
-For large datasets generating the heatmap can take a considerably long time, therefore the user can choose to skip the heatmap generation using the --no_generate_heatmaps argument. 
+<p align="justify">For large datasets generating the heatmap can take a considerably long time, therefore the user can choose to skip the heatmap generation using the `--no_generate_heatmaps argument`.</p> 
 
-The `loss_values` and `other_scores` plots can help tracking and improving the performance of the training by tracking the steadiness of the residual function and the minimum and maximum cosine distance scores between control samples in the cohort for choosing the optimal number of iterations. 
+<p align="justify">The additional plots generated at the end of the training (*\*loss_values.png* and *\*other_scores.png*) can help the user choose the optimal cutoff number of iterations at which the training reaches convergence by tracking the steadiness of the residual function (in *\*loss_values.png*) and the minimum and maximum cosine distance between the learned embeddings (a successfull training should learn embeddings that have a good coverage over the embedding space), as well as the silhouette score that indicates the cluser separation using a fixed threshold for the hierarchical clusterig (default threshold is 0.5).</p> 
 
 ### Visualize the output tree clusters
 
-In order to generate a visualization for the outut after a certain number of iterations using a different cutoff (default threshld id 0.5) use the folloing command:
+In order to generate a visualization for the outut after a certain number of iterations using a different cutoff for the hierarchilcal clustering (default threshold is 0.5) use provide following command:
 
 ```
 python visualize_embeddings.py --in_embeddings ../embeddings/1743606908_trees_morita_2020/1743606908_iter15000_embeddings.csv --corpus_dir../data/aml-mutation-trees/trees_morita_2020 --threshold 0.55
 ```
 
-This script also provides the output in a JSON format that can be directly visualised as a clustered tree cohort with [oncotreeVIS](https://cbg-ethz.github.io/oncotreeVIS).
+This script also generates a JSON file that can be directly uploaded to the [oncotreeVIS](https://cbg-ethz.github.io/oncotreeVIS) web application to visualize the trees at cohort level grouped by cluster.
+
+Please fell free to use your own script to visualize the learned embeddings by directly accessing the *\*embeddings.csv* output file.
