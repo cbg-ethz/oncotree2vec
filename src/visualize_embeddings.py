@@ -300,10 +300,7 @@ def visualize_embeddings(
     # Get metadata.
     sample_label_colors = None
     color_codes = None
-    if (
-        "trees_morita" in output_dir_name
-        or "trees_etienne" in output_dir_name
-    ):
+    if "trees_morita" in output_dir_name or "trees_etienne" in output_dir_name:
         sample_label_colors, color_codes = parse_metadata_aml_mutation_trees(
             df_distances.index
         )
