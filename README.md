@@ -14,7 +14,7 @@
 <p align="justify">We propose <b>oncotree2vec</b>, a method for clustering tumor mutation trees by learning vector representations of mutation trees that capture the different relationships between subclones in an unsupervised manner. Learning low-dimensional tree embeddings facilitates the visualization of relations between trees in large cohorts and can be used for downstream analyses, such as deep learning approaches for single-cell multi-omics data integration.</p>
 
 <div align="center">
-<img src="./docs/fig1.png" width="70%" height="auto">
+<img src="./docs/fig1.png" width="90%" height="auto">
 </div>
 
 ## Requirements
@@ -36,7 +36,7 @@ kaleido-core       0.1.0
 
 ## Arguments
 ```
-python oncotree2vec.py -h
+$ python oncotree2vec.py -h
 
 usage: oncotree2vec [-h] -c CORPUS -e EPOCHS [--wlk_sizes [WLK_SIZES ...]] [-x0 AUGMENT_INDIVIDUAL_NODES]
                     [-x1 AUGMENT_NEIGHBORHOODS] [-x2 AUGMENT_PAIRWISE_RELATIONS] [-x3 AUGMENT_DIRECT_EDGES]
@@ -53,7 +53,7 @@ usage: oncotree2vec [-h] -c CORPUS -e EPOCHS [--wlk_sizes [WLK_SIZES ...]] [-x0 
   -e EPOCHS, --epochs EPOCHS
                         Number of iterations the whole dataset of trees is traversed
 
-* Tree vocabulary related arguments:
+* Tree vocabulary related arguments (optional):
   --wlk_sizes [WLK_SIZES ...]
                         Seizes of WL kernel (i.e., degree of rooted subtree features to be considered for
                         representation learning)
@@ -78,11 +78,11 @@ usage: oncotree2vec [-h] -c CORPUS -e EPOCHS [--wlk_sizes [WLK_SIZES ...]] [-x0 
   -ilabel IGNORE_LABEL, --ignore_label IGNORE_LABEL
                         Label to be ignored when matching individual nodes or pairwise relations (usecase:
                         ignoring neutral clones)
-  --remove_unique_words / no_remove_unique_words
+  --remove_unique_words / --no_remove_unique_words
                         Discard from the vocabulary the words which are unique across the entire cohort. This
                         increases the contribution of rare word matches encoded in the embedding.
 
-* ML model related arguments:
+* ML model related arguments (optional):
   -b BATCH_SIZE, --batch_size BATCH_SIZE
                         Number of samples per training batch
   -d EMBEDDING_SIZE, --embedding_size EMBEDDING_SIZE
@@ -93,16 +93,16 @@ usage: oncotree2vec [-h] -c CORPUS -e EPOCHS [--wlk_sizes [WLK_SIZES ...]] [-x0 
                         Learning rate to optimize the loss function
 
 
-* Output visualization related aguments:
+* Output visualization related aguments (optional):
   -threshold HEATMAP_CONTRAST_THRESHOLD, --heatmap_contrast_threshold HEATMAP_CONTRAST_THRESHOLD
                         Numerical threshold in the range 0 and 1 indicating the cutoff for the hierarhical
                         clustering w.r.t. the maximum cosine distance between the samples inside each cluster
-  --generate_heatmaps / no_generate_heatmaps
+  --generate_heatmaps / --no_generate_heatmaps
                         Generate hierarchically-clustered heatmap of tree similarities based on the learned
                         embeddings after every 100 iterations.
 
 
-* Other arguments:
+* Other arguments (optional):
   -o OUTPUT_DIR, --output_dir OUTPUT_DIR
                         Path to directory for storing output embeddings
 
@@ -114,41 +114,41 @@ usage: oncotree2vec [-h] -c CORPUS -e EPOCHS [--wlk_sizes [WLK_SIZES ...]] [-x0 
 
 ```
 
-## Usage example (datasets used in the paper; parameteres used as listed in Suppl. Table 2)
-----------
-**123 AML point mutation trees (Morita et al. 2020)**
-```
-python oncotree2vec.py --corpus ../data/aml-mutation-trees/trees_morita_2020 --embedding_size 128 --wlk_sizes 1 2 3 --augment_tree_structure 0 --augment_neighborhoods 1 --augment_individual_nodes 5 --augment_root_child_relations 20 --augment_direct_edges 10 --augment_pairwise_relations 10 --augment_mutually_exclusive_relations 10 --epochs 20000 --filename_samplename_mapping ../data/aml-mutation-trees/trees_morita_2020/filename_index.csv
-```
+## Usage examples 
 
-
-**43 tumor evolution trees (Noble et al. 2022)**
-```
-python oncotree2vec.py --corpus ../data/modes_of_evolution/trees_noble_2022 --embedding_size 64 --wlk_sizes 1 2 3 --augment_tree_structure 5 --augment_neighborhoods 0 --augment_individual_nodes 0 --augment_root_child_relations 0 --augment_direct_edges 0 --augment_pairwise_relations 0 --augment_mutually_exclusive_relations 0 --epochs 1000 --filename_samplename_mapping ../data/modes_of_evolution/trees_noble_2022/filename_index.csv
-```
+### Datasets used in the paper (parameteres used as listed in Suppl. Table 2)
 
 **138 Non-small-cell lung cancer mutation trees (Caravagna et al., 2018)**
 ```
-python oncotree2vec.py --corpus ../data/tracerx_lung --embedding_size 128 --wlk_sizes 0 --augment_tree_structure 0 --augment_neighborhoods 0 --augment_individual_nodes 0 --augment_root_child_relations 1 --augment_direct_edges 1 --augment_pairwise_relations 1 --augment_mutually_exclusive_relations 1 --epochs 1000 --filename_samplename_mapping ../data/tracerx_lung/filename_index.csv
+$ python oncotree2vec.py --corpus ../data/tracerx_lung --embedding_size 128 --wlk_sizes 0 --augment_tree_structure 0 --augment_neighborhoods 0 --augment_individual_nodes 0 --augment_root_child_relations 1 --augment_direct_edges 1 --augment_pairwise_relations 1 --augment_mutually_exclusive_relations 1 --epochs 1000 --filename_samplename_mapping ../data/tracerx_lung/filename_index.csv
 ```
 
-## Prepare custom input
+**123 AML point mutation trees (Morita et al. 2020)**
+```
+$ python oncotree2vec.py --corpus ../data/aml-mutation-trees/trees_morita_2020 --embedding_size 128 --wlk_sizes 1 2 3 --augment_tree_structure 0 --augment_neighborhoods 1 --augment_individual_nodes 5 --augment_root_child_relations 20 --augment_direct_edges 10 --augment_pairwise_relations 10 --augment_mutually_exclusive_relations 10 --epochs 20000 --filename_samplename_mapping ../data/aml-mutation-trees/trees_morita_2020/filename_index.csv
+```
 
-Oncotree2vec learns tree embeddings in order to assess the similarity between different mutatin trees, based on the matches between the node labels accross different trees. We use input trees in [GEXF](https://networkx.org/documentation/stable/reference/readwrite/gexf.html) format, where the node labels are specified in the `Label` attribute, as shown in the dataset examples from the [data](https://github.com/cbg-ethz/oncotree2vec/tree/main/data) directory. The name of the GEXF node label attribute (`Label`, by default) can be changed through the `--gexf_node_attribute_label` argument. The .gexf file extension is required for the input tree. By default the filenames are mapped to the tree sample names. In addition, the user can provide a different mapping between the gexf filenames and the tree samples names using the `--filename_samplename_mapping` argument. 
+**43 tumor evolution trees (Noble et al. 2022)**
+```
+$ python oncotree2vec.py --corpus ../data/modes_of_evolution/trees_noble_2022 --embedding_size 64 --wlk_sizes 1 2 3 --augment_tree_structure 5 --augment_neighborhoods 0 --augment_individual_nodes 0 --augment_root_child_relations 0 --augment_direct_edges 0 --augment_pairwise_relations 0 --augment_mutually_exclusive_relations 0 --epochs 1000 --filename_samplename_mapping ../data/modes_of_evolution/trees_noble_2022/filename_index.csv
+```
+### Prepare custom input
+
+Oncotree2vec learns tree embeddings in order to assess the similarity between different mutatin trees, based on the matches between the node labels accross different trees. We use input trees in [GEXF](https://networkx.org/documentation/stable/reference/readwrite/gexf.html) format, where the node labels are specified in the *"Label"* attribute, as shown in the dataset examples from the [data](https://github.com/cbg-ethz/oncotree2vec/tree/main/data) directory. The name of the GEXF node label attribute (*"Label"*, by default) can be changed through the `--gexf_node_attribute_label` argument. The *.gexf* file extension is required for the input files. By default, the tree sample names used correspond to the *.gexf* filenames. The user can provide a different mapping between the *.gexf* filenames and the tree samples names using the `--filename_samplename_mapping` argument. 
 
 ## Output files
 
 The output files are generated in the `/embeddings` directory. For each run a new directory with a tiestamp prefix is created.
 
-<ul>
 After every 100 iterations the following files are generated:
-	<li> embeddings.csv (the learned embeddings)
- 	<li> heatmap.png (hierarchically-clustered heatmap of tree similarities based on the learned embeddings)
-        <li> heatmap_sample_order.csv
-	<li> oncotreevis.json (results in a JSON format that can be directly visualised with [oncotreeVIS](https://cbg-ethz.github.io/oncotreeVIS))
+- embeddings.csv (the learned embeddings)
+- heatmap.png (hierarchically-clustered heatmap of tree similarities based on the learned embeddings)
+- heatmap_sample_order.csv
+- oncotreevis.json (results in a JSON format that can be directly visualised with [oncotreeVIS](https://cbg-ethz.github.io/oncotreeVIS))
 
 In the last iteration additional output files are generated:
- 	<li> vocabulary_sizes.png (heatmap where the pixels reflect the size of the vocabulary word intersection between each pair of trees)
+<ul>
+	<li> vocabulary_sizes.png (heatmap where the pixels reflect the size of the vocabulary word intersection between each pair of trees)
 	<li> umap.png (using the --heatmap_contrast_threshold as cutoff for the hierarchical clustering)
 	<li> clusters.csv (cutoff set in --heatmap_contrast_threshold)
 	<li> loss_values.png (plot with the loss value after every iteration)
