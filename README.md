@@ -162,7 +162,7 @@ In the last iteration additional output files are generated:
 <p align="justify">In order to generate a visualization for the output after a certain number of iterations using a different cutoff for the hierarchilcal clustering (default threshold is 0.5) we provide following command:</p>
 
 ```
-$ cd src; python visualize_embeddings.py --in_embeddings ../embeddings/1743606908_trees_morita_2020/1743606908_iter15000_embeddings.csv --corpus_dir../data/aml-mutation-trees/trees_morita_2020 --threshold 0.55
+$ cd src; python visualize_embeddings.py --in_embeddings ../embeddings/1743606908_trees_morita_2020/1743606908_iter15000_embeddings.csv --corpus_dir ../data/aml-mutation-trees/trees_morita_2020 --threshold 0.55
 ```
 
 <p align="justify">This script also generates a JSON file that can be directly uploaded to the <a href=https://cbg-ethz.github.io/oncotreeVIS>oncotreeVIS</a> web application to visualize the trees at cohort level grouped by cluster.</p>
