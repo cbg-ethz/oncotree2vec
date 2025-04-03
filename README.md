@@ -167,4 +167,4 @@ $ python visualize_embeddings.py --in_embeddings ../embeddings/1743606908_trees_
 
 <p align="justify">This script also generates a JSON file that can be directly uploaded to the <a href=https://cbg-ethz.github.io/oncotreeVIS>oncotreeVIS</a> web application to visualize the trees at cohort level grouped by cluster.</p>
 
-<p align="justify">Please fell free to use your own script to visualize the learned embeddings by directly accessing the <i>\*embeddings.csv</i> output file.</p>
+<p align="justify">Please fell free to use your own script to visualize the learned embeddings by directly accessing the <i>*embeddings.csv</i> output file.</p>
