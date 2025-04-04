@@ -118,7 +118,7 @@ usage: oncotree2vec [-h] -c CORPUS -e EPOCHS [--wlk_sizes [WLK_SIZES ...]] [-x0 
 
 ### Datasets used in the oncotree2vec paper 
 *(parameteres used as listed in Suppl. Table 2)*
-
+<br/>
 **138 Non-small-cell lung cancer mutation trees from Caravagna et al., 2018**<br/>
 *(Suppl. Fig. 13 in the oncotree2vec paper)*
 ```
