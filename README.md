@@ -174,7 +174,7 @@ In the last iteration additional output files are generated:
 
 <p align="justify">For large datasets generating the heatmap can take a considerably long time, therefore the user can choose to skip the heatmap generation using the <code>--no_generate_heatmaps argument</code>.</p> 
 
-<p align="justify">The additional plots generated at the end of the training (<i>*loss_values.png</i> and <i>*other_scores.png</i>) can help the user choose the optimal cutoff number of iterations at which the training reaches convergence by tracking the steadiness of the residual function (in <i>loss_values.png</i>) and the minimum and maximum cosine distance between the learned embeddings (a successfull training should learn embeddings that have a good coverage over the embedding space), as well as the silhouette score that indicates the cluser separation using a fixed threshold for the hierarchical clusterig (default threshold is 0.5).</p> 
+<p align="justify">The additional plots generated at the end of the training (<i>*loss_values.png</i> and <i>*other_scores.png</i>) can help the user choose the optimal cutoff number of iterations at which the training reaches convergence by tracking the steadiness of the residual function (in <i>*loss_values.png</i>) and the minimum and maximum cosine distance between the learned embeddings (a successfull training should learn embeddings that have a good coverage over the embedding space), as well as the silhouette score that indicates the cluser separation using a fixed threshold for the hierarchical clusterig (default threshold is 0.5).</p> 
 
 ### Visualize the output tree clusters
 
