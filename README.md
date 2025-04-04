@@ -132,6 +132,17 @@ $ cd src; python oncotree2vec.py --corpus ../data/aml-mutation-trees/trees_morit
 ```
 $ cd src; python oncotree2vec.py --corpus ../data/modes_of_evolution/trees_noble_2022 --embedding_size 64 --wlk_sizes 1 2 3 --augment_tree_structure 5 --augment_neighborhoods 0 --augment_individual_nodes 0 --augment_root_child_relations 0 --augment_direct_edges 0 --augment_pairwise_relations 0 --augment_mutually_exclusive_relations 0 --epochs 1000 --filename_samplename_mapping ../data/modes_of_evolution/trees_noble_2022/filename_index.csv
 ```
+
+**Synthetic dataset I**
+```
+$ cd src; python oncotree2vec.py --corpus ../data/synthetic_data/1_neighborhood-matching-trees --embedding_size 128 --wlk_sizes 1 2 3 4 5 6 7 8 9 --augment_tree_structure 1 --augment_neighborhoods 1 --augment_individual_nodes 0 --augment_root_child_relations 0 --augment_direct_edges 0 --augment_pairwise_relations 0 --augment_mutually_exclusive_relations 0 --epochs 10000 --filename_samplename_mapping ../data/synthetic_data/1_neighborhood-matching-trees/filename_index.csv
+```
+
+**Synthetic dataset II**
+```
+$ cd src; python oncotree2vec.py --corpus ../data/synthetic_data/2_matching-vocabulary-sizes --embedding_size 64 --wlk_sizes 0 --augment_tree_structure 0 --augment_neighborhoods 0 --augment_individual_nodes 1 --augment_root_child_relations 0 --augment_direct_edges 0 --augment_pairwise_relations 0 --augment_mutually_exclusive_relations 0 --no_remove_unique_words --epochs 500 --filename_samplename_mapping ../data/synthetic_data/2_matching-vocabulary-sizes/filename_index.csv
+```
+
 ### Prepare custom input
 
 <p align="justify">Oncotree2vec learns tree embeddings in order to assess the similarity between different mutatin trees, based on the matches between the node labels accross different trees. We use input trees in <a href=https://networkx.org/documentation/stable/reference/readwrite/gexf.html>GEXF</a> format, where the node labels are specified in the <i>"Label"</i> attribute, as shown in the dataset examples from the <a href=https://github.com/cbg-ethz/oncotree2vec/tree/main/data>data</a> directory. The name of the GEXF node label attribute (<i>"Label"</i>, by default) can be changed through the <code>--gexf_node_attribute_label</code> argument. The <i>.gexf</i> file extension is required for the input files. By default, the tree sample names used correspond to the <i>.gexf</i> filenames. The user can provide a different mapping between the <i>.gexf</i> filenames and the tree samples names using the <code>--filename_samplename_mapping</code> argument.</p> 
