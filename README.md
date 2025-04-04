@@ -118,19 +118,19 @@ usage: oncotree2vec [-h] -c CORPUS -e EPOCHS [--wlk_sizes [WLK_SIZES ...]] [-x0 
 
 ### Datasets used in the oncotree2vec paper (parameteres used as listed in Suppl. Table 2)
 
-**138 Non-small-cell lung cancer mutation trees from Caravagna et al., 2018**\
+**138 Non-small-cell lung cancer mutation trees from Caravagna et al., 2018**<br/>
 *(Suppl. Fig. 13 in the oncotree2vec paper)*
 ```
 $ cd src; python oncotree2vec.py --corpus ../data/tracerx_lung --embedding_size 128 --wlk_sizes 0 --augment_tree_structure 0 --augment_neighborhoods 0 --augment_individual_nodes 0 --augment_root_child_relations 1 --augment_direct_edges 1 --augment_pairwise_relations 1 --augment_mutually_exclusive_relations 1 --epochs 1000 --filename_samplename_mapping ../data/tracerx_lung/filename_index.csv
 ```
 
-**123 AML point mutation trees from Morita et al., 2020**\ 
+**123 AML point mutation trees from Morita et al., 2020**<br/> 
 *(Fig. 3 and Suppl. Fig. 11 in the oncotree2vec paper)*
 ```
 $ cd src; python oncotree2vec.py --corpus ../data/aml-mutation-trees/trees_morita_2020 --embedding_size 128 --wlk_sizes 1 2 3 --augment_tree_structure 0 --augment_neighborhoods 1 --augment_individual_nodes 5 --augment_root_child_relations 20 --augment_direct_edges 10 --augment_pairwise_relations 10 --augment_mutually_exclusive_relations 10 --epochs 20000 --filename_samplename_mapping ../data/aml-mutation-trees/trees_morita_2020/filename_index.csv
 ```
 
-**43 tumor evolution trees from Noble et al., 2022**\
+**43 tumor evolution trees from Noble et al., 2022**<br/>
 *(Fig. 3 and Suppl. Fig. 9 in the oncotree2vec paper)*
 ```
 $ cd src; python oncotree2vec.py --corpus ../data/modes_of_evolution/trees_noble_2022 --embedding_size 64 --wlk_sizes 1 2 3 --augment_tree_structure 5 --augment_neighborhoods 0 --augment_individual_nodes 0 --augment_root_child_relations 0 --augment_direct_edges 0 --augment_pairwise_relations 0 --augment_mutually_exclusive_relations 0 --epochs 1000 --filename_samplename_mapping ../data/modes_of_evolution/trees_noble_2022/filename_index.csv
