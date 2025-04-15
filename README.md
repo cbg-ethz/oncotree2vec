@@ -4,10 +4,12 @@
 </div>
 
 [![Bioinformatics](https://img.shields.io/badge/Bioinformatics-10.1101/2023.11.16.567363-blue.svg)](https://doi.org/10.1093/bioinformatics/btae214)
+----------
 # oncotree2vec – A method for embedding and clustering of tumor mutation trees
 
+### Presentation at ISMB 2024: [video](https://www.youtube.com/watch?v=AlDJspGZiMw) 
 
-## Abstract
+### Abstract
 
 <p align="justify">Understanding the genomic heterogeneity of tumors is an important task in computational oncology, especially in the context of finding personalized treatments based on the genetic profile of each patient’s tumor. Tumor clustering that takes into account the temporal order of genetic events, as represented by tumor mutation trees, is a powerful approach for grouping together patients with genetically and evolutionarily similar tumors and can provide insights into discovering tumor sub-types, for more accurate clinical diagnosis and prognosis.</p>
 
