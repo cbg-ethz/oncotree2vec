@@ -23,7 +23,7 @@
 
 ## Requirements
 
-The codebase is implemented in Python (at least version 3.11), with the following dependencies:
+The codebase is implemented in Python (version 3.11), with the following dependencies:
 ```
 anytree            2.8.0
 numpy              1.23.5  
